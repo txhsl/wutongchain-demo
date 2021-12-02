@@ -1,0 +1,54 @@
+contract Test {
+    
+    public string name = "Test"
+    
+    public uint8 decimals = 4
+    
+    public string getName() {
+        return name
+    }
+    
+    public uint8 getDecimals() {
+        return decimals
+    }
+
+    //非必需
+    public bool register(string account) {
+        db_set(account, 0)
+        
+        event(name+"_register", account)
+        return true
+    }
+    
+    public uint64 balanceOf(string account) {
+        return db_get<uint64>(account)
+    }
+    
+    public bool mint(string to, uint64 amount) {
+        uint64 balance = db_get<uint64>(to)
+        balance = balance + amount
+        
+        db_set(to, balance)
+        
+        event(name+"_mint", to)
+        return true
+    }
+    
+    public bool transfer(string from, string to, uint64 amount) {
+        uint64 balanceA = db_get<uint64>(from)
+        uint64 balanceB = db_get<uint64>(to)
+        
+        if(balanceA >= amount && balanceB + amount > balanceB) {
+            balanceA = balanceA - amount
+            balanceB = balanceB + amount
+
+            db_set(from, balanceA)
+            db_set(to, balanceB)
+            event(name+"_transfer", to)
+        }
+        else {
+            return false
+        }
+        return true
+    }
+}

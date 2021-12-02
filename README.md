@@ -62,8 +62,9 @@ npm run build
 ## 其他工具
 
 1. SDK接入文档 - https://blkc2021.wutongchain.com/sdkv2.pdf?1638449404000
-2. 比赛链浏览器 - https://dev-env.wutongchain.com:49082/#/contract?chainkey=explorer_1&appliName=JinGangSai&appliId=jingangsai
-3. 合约在线IDE - https://ide.wutongchain.com/#/ide/index
+2. 合约文档 - https://ide.wutongchain.com/file/wvm_syntax.pdf?1638450699000
+3. 比赛链浏览器 - https://dev-env.wutongchain.com:49082/#/contract?chainkey=explorer_1&appliName=JinGangSai&appliId=jingangsai
+4. 合约在线IDE - https://ide.wutongchain.com/#/ide/index
 
 ## License
 
