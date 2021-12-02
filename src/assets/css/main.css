@@ -56,6 +56,10 @@ a {
     margin: 10px 0;
 }
 
+.el-table th {
+    background-color: #f5f7fa !important;
+}
+
 .pagination {
     margin: 20px 0;
     text-align: right;
@@ -80,11 +84,11 @@ a {
 
 .move-enter-active,
 .move-leave-active {
-    transition: opacity .5s;
+    transition: opacity .1s ease;
 }
 
-.move-enter,
-.move-leave {
+.move-enter-from,
+.move-leave-to {
     opacity: 0;
 }
 
