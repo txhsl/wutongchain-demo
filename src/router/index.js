@@ -109,6 +109,13 @@ const routes = [
                     title: '富文本编辑器'
                 },
                 component: () => import (/* webpackChunkName: "editor" */ '../views/Editor.vue')
+            }, {
+                path: '/chainstatus',
+                name: 'chainstatus',
+                meta: {
+                    title: '区块链状态'
+                },
+                component: () => import (/* webpackChunkName: "chainstatus" */ '../views/ChainStatus.vue')
             }
         ]
     }, {

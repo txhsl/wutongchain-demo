@@ -7,3 +7,27 @@ export const fetchData = query => {
         params: query
     });
 };
+
+export const fetchChainStatus = query => {
+    return request({
+        url: '/api/chain/apihealth',
+        method: 'get',
+        params: query
+    });
+};
+
+export const fetchChainHeight = query => {
+    return request({
+        url: '/api/block/height',
+        method: 'get',
+        params: query
+    });
+};
+
+export const fetchChainMembers = query => {
+    return request({
+        url: '/api/memberlist',
+        method: 'get',
+        params: query
+    });
+};
