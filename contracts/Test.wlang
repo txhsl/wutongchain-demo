@@ -12,28 +12,28 @@ contract Test {
         return decimals
     }
 
-    public bool register(string account) {
+    public string register(string account) {
         db_set(account, 0)
         
         event(name+"_register", account)
-        return true
+        return "success"
     }
     
     public uint64 balanceOf(string account) {
         return db_get<uint64>(account)
     }
     
-    public bool mint(string to, uint64 amount) {
+    public string mint(string to, uint64 amount) {
         uint64 balance = db_get<uint64>(to)
         balance = balance + amount
         
         db_set(to, balance)
         
         event(name+"_mint", to)
-        return true
+        return "success"
     }
     
-    public bool transfer(string from, string to, uint64 amount) {
+    public string transfer(string from, string to, uint64 amount) {
         uint64 balanceA = db_get<uint64>(from)
         uint64 balanceB = db_get<uint64>(to)
         
@@ -46,8 +46,8 @@ contract Test {
             event(name+"_transfer", to)
         }
         else {
-            return false
+            return "failed"
         }
-        return true
+        return "success"
     }
 }
