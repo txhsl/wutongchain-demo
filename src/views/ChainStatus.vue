@@ -3,7 +3,7 @@
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item>
-                    <i class="el-icon-lx-cascades"></i> 区块链状态
+                    <i class="el-icon-lx-global"></i> 区块链状态
                 </el-breadcrumb-item>
             </el-breadcrumb>
         </div>
@@ -39,7 +39,7 @@ import { ElMessage } from "element-plus";
 import { fetchChainStatus, fetchChainHeight, fetchChainMembers } from "../api/index";
 
 export default {
-    name: "basetable",
+    name: "chainstatus",
     setup() {
         const ledger = ref("jingangsai");
         const health = ref(false);

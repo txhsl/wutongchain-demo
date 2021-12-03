@@ -116,6 +116,13 @@ const routes = [
                     title: '区块链状态'
                 },
                 component: () => import (/* webpackChunkName: "chainstatus" */ '../views/ChainStatus.vue')
+            }, {
+                path: '/smartcontract',
+                name: 'smartcontract',
+                meta: {
+                    title: '智能合约'
+                },
+                component: () => import (/* webpackChunkName: "smartcontract" */ '../views/SmartContract.vue')
             }
         ]
     }, {

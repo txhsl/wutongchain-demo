@@ -53,6 +53,11 @@ export default {
                         index: "/chainstatus",
                         title: "区块链状态",
                     },
+                    {
+                        icon: "el-icon-lx-apps",
+                        index: "/smartcontract",
+                        title: "智能合约",
+                    },
                 ]
             },
             {

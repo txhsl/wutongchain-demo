@@ -12,7 +12,6 @@ contract Test {
         return decimals
     }
 
-    //非必需
     public bool register(string account) {
         db_set(account, 0)
         

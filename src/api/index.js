@@ -31,3 +31,30 @@ export const fetchChainMembers = query => {
         params: query
     });
 };
+
+export const installContract = query => {
+    return request({
+        url: '/api/tx/sc/install',
+        method: 'post',
+        params: { ledger: "jingangsai" },
+        data: query
+    });
+}
+
+export const queryContract = query => {
+    return request({
+        url: '/api/tx/sc/query',
+        method: 'post',
+        params: { ledger: "jingangsai" },
+        data: query
+    });
+}
+
+export const invokeContract = query => {
+    return request({
+        url: '/api/tx/sc/invoke',
+        method: 'post',
+        params: { ledger: "jingangsai" },
+        data: query
+    });
+}
