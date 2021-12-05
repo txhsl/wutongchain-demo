@@ -25,9 +25,10 @@ contract Test {
     
     public string mint(string to, uint64 amount) {
         uint64 balance = db_get<uint64>(to)
-        balance = balance + amount
-        
-        db_set(to, balance)
+        if(balance + amount > balance) {
+            balance = balance + amount
+            db_set(to, balance)
+        }
         
         event(name+"_mint", to)
         return "success"
