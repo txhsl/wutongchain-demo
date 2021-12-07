@@ -58,6 +58,11 @@ export default {
                         index: "/smartcontract",
                         title: "智能合约",
                     },
+                    {
+                        icon: "el-icon-lx-lock",
+                        index: "/crypto",
+                        title: "密码工具",
+                    },
                 ]
             },
             {

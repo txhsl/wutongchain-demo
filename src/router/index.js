@@ -123,6 +123,13 @@ const routes = [
                     title: '智能合约'
                 },
                 component: () => import (/* webpackChunkName: "smartcontract" */ '../views/SmartContract.vue')
+            }, {
+                path: '/crypto',
+                name: 'crypto',
+                meta: {
+                    title: '密码工具'
+                },
+                component: () => import (/* webpackChunkName: "smartcontract" */ '../views/Crypto.vue')
             }
         ]
     }, {
