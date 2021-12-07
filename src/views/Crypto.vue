@@ -63,6 +63,7 @@
 import { ref, reactive, setDevtoolsHook } from "vue";
 import { ElMessage } from "element-plus";
 import { fetchPrivateKey, fetchPublicKey } from "../api/index";
+import { sm2 } from "sm-crypto";
 import { JSEncrypt } from "jsencrypt";
 import { SHA256 } from "crypto-js";
 
