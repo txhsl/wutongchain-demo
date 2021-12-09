@@ -32,16 +32,16 @@
                 <el-form ref="formBRef" :rules="rules" :model="formB" label-width="80px">
                     <el-form-item label="选择密钥" prop="keystore">
                         <el-select v-model="formB.keystore" placeholder="请选择">
-                            <el-option key="1" label="1" value="1"></el-option>
-                            <el-option key="2" label="2" value="2"></el-option>
-                            <el-option key="3" label="3" value="3"></el-option>
+                            <el-option key="1" label="1" value="0"></el-option>
+                            <el-option key="2" label="2" value="1"></el-option>
+                            <el-option key="3" label="3" value="2"></el-option>
                         </el-select>
                         <el-button type="primary" class="ml20" @click="onSwitch">载入</el-button>
                     </el-form-item>
-                    <el-form-item label="RSA私钥" prop="prvkey">
+                    <el-form-item label="ECC私钥" prop="prvkey">
                         <el-input v-model="formB.prvkey" placeholder="依照文件自动加载" disabled></el-input>
                     </el-form-item>
-                    <el-form-item label="RSA公钥" prop="pubkey">
+                    <el-form-item label="ECC公钥" prop="pubkey">
                         <el-input v-model="formB.pubkey" placeholder="依照文件自动加载" disabled></el-input>
                     </el-form-item>
                     <el-form-item label="消息内容" prop="msg">
@@ -49,7 +49,7 @@
                         <el-button type="primary" class="mt20" @click="onSignB">签名</el-button>
                     </el-form-item>
                     <el-form-item label="签名输出" prop="sig">
-                        <el-input v-model="formB.sig" placeholder="依照消息内容自动计算" disabled></el-input>
+                        <el-input v-model="formB.sig" placeholder="依照消息内容自动计算"></el-input>
                         <el-button type="primary" class="mt20" @click="onValidateB">验证</el-button>
                         <el-button type="primary" class="mt20" @click="onResetB">重置</el-button>
                     </el-form-item>
@@ -60,12 +60,11 @@
 </template>
 
 <script>
-import { ref, reactive, setDevtoolsHook } from "vue";
+import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
 import { fetchPrivateKey, fetchPublicKey } from "../api/index";
 import { sm2 } from "sm-crypto";
-import { JSEncrypt } from "jsencrypt";
-import { SHA256 } from "crypto-js";
+import { KEYUTIL, KJUR } from "jsrsasign";
 
 export default {
     name: "crypto",
@@ -78,7 +77,6 @@ export default {
             msg: "",
             sig: "",
         });
-        
 
         const rules = {
 
@@ -138,7 +136,8 @@ export default {
         });
 
         const selection = reactive([1, 2, 3]);
-        const encryptor = new JSEncrypt();
+        const currentPrvKey = ref(null);
+        const currentPubKey = ref(null);
         const keystore = reactive([]);
 
         const loadKeystore = () => {
@@ -153,24 +152,29 @@ export default {
                 });
                 keystore.push(keypair);
             });
-            console.log(keystore);
         };
         loadKeystore();
 
         const onSwitch = () => {
             formB.prvkey = keystore[parseInt(formB.keystore)].prvkey;
             formB.pubkey = keystore[parseInt(formB.keystore)].pubkey;
+
+            currentPrvKey.value = KEYUTIL.getKey(formB.prvkey);
+            currentPubKey.value = KEYUTIL.getKey(formB.pubkey.replaceAll(" EC ", " "));
         };
 
         const onSignB = () => {
-            encryptor.setPrivateKey(formB.prvkey);
-            formB.sig = encryptor.sign(formB.msg, SHA256, "sha256");
-            console.log(window.atob(formB.sig));
+            let sig = new KJUR.crypto.Signature({'alg':'SHA256withECDSA'});
+            sig.init({d: currentPrvKey.value.prvKeyHex, curve: 'secp256r1'});
+            sig.updateString(formB.msg);
+            formB.sig = sig.sign();
         };
 
         const onValidateB = () => {
-            encryptor.setPublicKey(formB.pubkey);
-            if (encryptor.verify(formB.msg, formB.sig, SHA256)) {
+            let sig = new KJUR.crypto.Signature({'alg':'SHA256withECDSA', "prov": "cryptojs/jsrsa"});
+            sig.init({xy: currentPrvKey.value.pubKeyHex, curve: 'secp256r1'});
+            sig.updateString(formB.msg);
+            if (sig.verify(formB.sig)) {
                 ElMessage.success("签名验证通过");
             }
             else {

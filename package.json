@@ -9,9 +9,8 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "crypto-js": "^4.1.1",
     "element-plus": "1.0.2-beta.52",
-    "jsencrypt": "^3.2.1",
+    "jsrsasign": "^10.5.1",
     "sm-crypto": "^0.3.6",
     "vue": "^3.1.2",
     "vue-cropperjs": "^5.0.0",
