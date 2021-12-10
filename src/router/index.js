@@ -123,6 +123,13 @@ const routes = [
                     title: '智能合约'
                 },
                 component: () => import (/* webpackChunkName: "smartcontract" */ '../views/SmartContract.vue')
+            },{
+                path: '/platform',
+                name: 'platform',
+                meta: {
+                    title: '碳排放系统'
+                },
+                component: () => import(/* webpackChunkName: "platform" */ '../views/Platform.vue'),
             }
         ]
     }, {
