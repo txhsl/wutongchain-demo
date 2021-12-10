@@ -64,7 +64,7 @@ import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
 import { fetchPrivateKey, fetchPublicKey } from "../api/index";
 import { sm2 } from "sm-crypto";
-import { KEYUTIL, KJUR } from "jsrsasign";
+import { KEYUTIL } from "jsrsasign";
 
 export default {
     name: "crypto",
@@ -164,15 +164,15 @@ export default {
         };
 
         const onSignB = () => {
-            let sig = new KJUR.crypto.Signature({'alg':'SHA256withECDSA'});
-            sig.init({d: currentPrvKey.value.prvKeyHex, curve: 'secp256r1'});
+            let sig = new KJUR.crypto.Signature({"alg": "SM3withECDSA", "prov": "cryptojs/jsrsa"});
+            sig.initSign({"ecprvhex": currentPrvKey.value.prvKeyHex, "eccurvename": "secp256r1"});
             sig.updateString(formB.msg);
             formB.sig = sig.sign();
         };
 
         const onValidateB = () => {
-            let sig = new KJUR.crypto.Signature({'alg':'SHA256withECDSA', "prov": "cryptojs/jsrsa"});
-            sig.init({xy: currentPrvKey.value.pubKeyHex, curve: 'secp256r1'});
+            let sig = new KJUR.crypto.Signature({"alg": "SM3withECDSA", "prov": "cryptojs/jsrsa"});
+            sig.initVerifyByPublicKey({"ecpubhex": currentPubKey.value.pubKeyHex, "eccurvename": "secp256r1"});
             sig.updateString(formB.msg);
             if (sig.verify(formB.sig)) {
                 ElMessage.success("签名验证通过");
