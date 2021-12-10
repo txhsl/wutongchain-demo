@@ -59,6 +59,11 @@ export default {
                         title: "智能合约",
                     },
                     {
+                      icon: "el-icon-lx-apps",
+                      index: '/platform',
+                      title: "碳排放系统"
+                    },
+                    {
                         icon: "el-icon-lx-lock",
                         index: "/crypto",
                         title: "密码工具",
