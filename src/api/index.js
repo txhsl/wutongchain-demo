@@ -8,6 +8,22 @@ export const fetchData = query => {
     });
 };
 
+export const fetchPrivateKey = query => {
+    return request({
+        url: './keystore/' + query.id + '/key.pem',
+        method: 'get',
+        params: query
+    });
+};
+
+export const fetchPublicKey = query => {
+    return request({
+        url: './keystore/' + query.id + '/pub.pem',
+        method: 'get',
+        params: query
+    });
+};
+
 export const fetchChainStatus = query => {
     return request({
         url: '/api/chain/apihealth',

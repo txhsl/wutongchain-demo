@@ -145,7 +145,6 @@ export default {
                 } else {
                     return false;
                 }
-                console.log(results);
             });
         };
 
