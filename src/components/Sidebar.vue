@@ -44,9 +44,14 @@ export default {
                 title: "系统首页",
             },
             {
-                icon: "el-icon-lx-cascades",
+                icon: "el-icon-lx-apps",
+                index: '/platform',
+                title: "碳排放系统"
+            },
+            {
+                icon: "el-icon-lx-search",
                 index: "1",
-                title: "功能页面",
+                title: "工具页面",
                 subs: [
                     {
                         icon: "el-icon-lx-global",
@@ -59,11 +64,6 @@ export default {
                         title: "智能合约",
                     },
                     {
-                      icon: "el-icon-lx-apps",
-                      index: '/platform',
-                      title: "碳排放系统"
-                    },
-                    {
                         icon: "el-icon-lx-lock",
                         index: "/crypto",
                         title: "密码工具",
@@ -71,7 +71,7 @@ export default {
                 ]
             },
             {
-                icon: "el-icon-lx-cascades",
+                icon: "el-icon-lx-skin",
                 index: "2",
                 title: "开发模板",
                 subs: [
