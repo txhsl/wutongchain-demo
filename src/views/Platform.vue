@@ -63,7 +63,7 @@
             </el-card>
             <el-row :gutter="20">
               <el-col :span="12">
-                <el-card>
+                <el-card class="mt20">
                   <template #header>
                     <span>主引擎</span>
                   </template>
@@ -90,7 +90,7 @@
                 </el-card>
               </el-col>
               <el-col :span="12">
-                <el-card>
+                <el-card class="mt20">
                   <template #header>
                     <span>副引擎</span>
                   </template>
@@ -202,7 +202,7 @@
         </el-card>
       </div>
       <div v-if="isNavSelected('5')">
-        <el-card>
+        <el-card class="mt20">
           <template #header>
             <strong>船基本信息</strong>
           </template>
@@ -218,7 +218,7 @@
             <el-descriptions-item label="船体类型">散装货轮</el-descriptions-item>
           </el-descriptions>
         </el-card>
-        <el-card>
+        <el-card class="mt20">
           <template #header>
             <strong>船体参数</strong>
           </template>
@@ -235,7 +235,7 @@
             <el-descriptions-item label="处于夏季吃水线时的载重量">150,000吨</el-descriptions-item>
           </el-descriptions>
         </el-card>
-        <el-card>
+        <el-card class="mt20">
           <template #header>
             <strong>我的碳积分</strong>
           </template>
