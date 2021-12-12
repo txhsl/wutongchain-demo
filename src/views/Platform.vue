@@ -35,7 +35,7 @@
               <el-form-item label="船舶类型" prop="type" class="ifl">
                 <el-select v-model="form.type" @change="onShipTypeChange" id="ship-type">
                   <el-option
-                      v-for="item in shipType"
+                      v-for="item in ship_type"
                       :label="item.label"
                       :value="item.value"
                       :key="item.value"
@@ -79,6 +79,7 @@
                   <el-form-item label="燃油类型" prop="main_oil_type">
                     <el-select v-model="form.main_oil_type">
                       <el-option v-for="item in oil_type"
+                                 :key="item.label"
                                  :label="item.label"
                                  :value="item.value"></el-option>
                     </el-select>
@@ -99,6 +100,7 @@
                   <el-form-item label="燃油类型" prop="aux_oil_type">
                     <el-select v-model="form.aux_oil_type">
                       <el-option v-for="item in oil_type"
+                                 :key="item.label"
                                  :label="item.label"
                                  :value="item.value"></el-option>
                     </el-select>
@@ -257,11 +259,11 @@
 </template>
 
 <script>
-import {reactive, ref} from "vue";
-import data from '/public/data.json'
-import {fetchPrivateKey, fetchPublicKey, invokeContract, queryContract} from "../api";
-import {ElMessage} from "element-plus";
-import {KEYUTIL} from "jsrsasign";
+import { reactive, ref, onMounted, onBeforeMount } from "vue";
+import { fetchData, fetchPrivateKey, fetchPublicKey, invokeContract, queryContract } from "../api";
+import { ElMessage } from "element-plus";
+import { KEYUTIL } from "jsrsasign";
+
 export default {
   name: "Platform",
   setup() {
@@ -276,7 +278,7 @@ export default {
       file: "",
       name: "95669c2b4e63edc0978e1d3c85d623552b6f600d05e55cd910c528217bcb2a7f",
       method: '',
-      args:[]
+      args: []
     });
     const new_tx = reactive({
       time: '',
@@ -314,16 +316,55 @@ export default {
     });
     const sailing_record = ref([]);
     const transaction_record = ref([]);
-    const rules = data.rules;
-    const new_sailing_rules = data.new_sailing_rules;
-    const new_tx_rules = data.new_tx_rules;
-    const oil_type = ref(data.oil_type);
-    const shipType = ref(data.ship_type);
-    const tonnage = ref(data.all_tonnage[form.carry_tonnage]);
+    const rules = ref({});
+    const new_sailing_rules = ref({});
+    const new_tx_rules = ref({});
+    const oil_type = ref([]);
+    const ship_type = ref([]);
+    const all_tonnage = ref([]);
+    const tonnage = ref([]);
+    const CF = ref([]);
+    const AC = ref([]);
+    const X = ref([]);
+    const cap_fac = ref([]);
 
+    const getData = () => {
+      fetchData(null).then((res) => {
+        rules.value = res.rules;
+        new_sailing_rules.value = res.new_sailing_rules;
+        new_tx_rules.value = res.new_tx_rules;
+        oil_type.value = res.oil_type;
+        ship_type.value = res.ship_type;
+        all_tonnage.value = res.all_tonnage;
+        CF.value = res.CF;
+        AC.value = res.AC;
+        X.value = res.X;
+        cap_fac.value = res.cap_fac;
+      });
+    };
+
+    const getAccount = () => {
+      let query = {
+        id: 1
+      };
+      let keypair = { sk: '', pk: '' };
+      fetchPrivateKey(query).then((res) => {
+        keypair.sk = res;
+        fetchPublicKey(query).then((res) => {
+          keypair.pk = res;
+          sk.value = KEYUTIL.getKey(keypair.sk);
+          pk.value = KEYUTIL.getKey(keypair.pk.replaceAll(" EC ", " "));
+        });
+      });
+    };
+
+    onBeforeMount(() => {
+      getData();
+      getAccount();
+    });
 
     const onShipTypeChange = (val) => {
-      tonnage.value = data.all_tonnage[val];
+      tonnage.value = all_tonnage.value[val];
       form.carry_tonnage = 0;
     };
     const isNavSelected = (index) => activeNavMenu.value === index;
@@ -333,51 +374,57 @@ export default {
     const calEEXI = () => {
       formRef.value.validate((valid) => {
         if(valid) {
-          const account = pk.value.pubKeyHex;
-          const MEA = form.main_engine_amount;
-          const MEP = Math.min(form.mcr * 0.75, form.mcr_lim * 0.83);
-          const MEC = data.CF[form.main_oil_type];
-          const MESFC = form.main_oil_rate;
+          let account = pk.value.pubKeyHex;
+          let ac = AC.value[form.type];
+          let x = X.value[form.type][form.carry];
+          let require_eexi = (1 - x / 100) * ac[0] * Math.pow(form.carry_tonnage, -ac[1]);
+          query.method = 'register';
+          query.args = [account, x, ac[0], form.carry_tonnage, ac[1], require_eexi];
 
-          const AEP = form.amcr * 0.5;
-          const AEC = data.CF[form.aux_oil_type];
-          const AESFC = form.aux_oil_rate;
-
-          const cap_fac = data.cap_fac[form.type];
-          const capacity = cap_fac[0] * form.carry_tonnage + cap_fac[1] * form.total_tonnage;
-          const velocity = form.speed;
-          query.method = "register";
-          query.args = [account, MEA, MEP, MEC, MESFC, AEP, AEC, AESFC, capacity, velocity];
           let msg = JSON.stringify(query);
           let sig = sign(msg);
           if(validate(msg, sig)) {
-            ElMessage.success("验证成功");
-          }else {
-            ElMessage.error("验证失败");
+            ElMessage.success("签名验证成功！");
+          }
+          else {
+            ElMessage.error("签名验证失败！");
             return;
           }
+
           invokeContract(query).then((res) => {
             if(res.state === 200) {
-              ElMessage.success("调用成功！");
-              const ac = data.AC[form.type];
-              const X = data.X[form.type][form.carry];
-              const require_eexi = (1 - X / 100) * ac[0] * Math.pow(form.carry_tonnage, -ac[1]);
-              query.method = 'register';
-              query.args = [account, X, ac[0], form.carry_tonnage, ac[1], require_eexi];
-              invokeContract(query).then(res => {
-                if(res.state !== 200) {
-                  ElMessage.error("更新标准EEXI值失败");
-                }
-              })
+              ElMessage.success("EEXI期望值设置成功！");
             }
             else {
-              ElMessage.error("调用失败！");
+              ElMessage.error("EEXI期望值设置失败！");
             }
           });
-        }else {
+
+          let MEA = form.main_engine_amount;
+          let MEP = Math.min(form.mcr * 0.75, form.mcr_lim * 0.83);
+          let MEC = CF.value[form.main_oil_type];
+          let MESFC = form.main_oil_rate;
+          let AEP = form.amcr * 0.5;
+          let AEC = CF.value[form.aux_oil_type];
+          let AESFC = form.aux_oil_rate;
+          let capacity = cap_fac.value[form.type][0] * form.carry_tonnage + cap_fac.value[form.type][1] * form.total_tonnage;
+          let velocity = form.speed;
+
+          query.method = "updateArchive";
+          query.args = [account, MEA, MEP, MEC, MESFC, AEP, AEC, AESFC, capacity, velocity];
+          invokeContract(query).then((res) => {
+            if(res.state === 200) {
+              ElMessage.success("EEXI实际值更新成功！");
+            }
+            else {
+              ElMessage.error("EEXI实际值更新失败！");
+            }
+          });
+        }
+        else {
           return false;
         }
-      })
+      });
     };
 
     const sign = (msg) => {
@@ -397,34 +444,43 @@ export default {
     const getBalance = () => {
       query.method = 'balanceOf';
       query.args = [pk.value.pubKeyHex];
-      queryContract(query).then(res => {
+      queryContract(query).then((res) => {
         if(res.state === 200){
-          ElMessage.success("更新碳积分成功!");
+          ElMessage.success("更新碳积分成功！");
           balance.value = res.data.result;
         }
-      })
+        else {
+          ElMessage.error("更新碳积分失败！");
+        }
+      });
     };
 
     const getRequiredEEXI = () => {
       query.method = 'getRequiredEEXI';
       query.args = [pk.value.pubKeyHex];
-      queryContract(query).then(res => {
+      queryContract(query).then((res) => {
         if(res.state === 200){
-          ElMessage.success("更新标准EEXI成功!");
+          ElMessage.success("EEXI期望值获取成功！");
           required_eexi.value = res.data.result;
         }
-      })
+        else {
+          ElMessage.error("EEXI期望值获取失败！");
+        }
+      });
     };
 
     const getCurrentEEXI = () => {
       query.method = 'getCurrentEEXI';
       query.args = [pk.value.pubKeyHex];
-      queryContract(query).then(res => {
+      queryContract(query).then((res) => {
         if(res.state === 200){
-          ElMessage.success("更新当前EEXI成功!");
+          ElMessage.success("EEXI实际值获取成功！");
           current_eexi.value = res.data.result;
         }
-      })
+        else {
+          ElMessage.error("EEXI期望值获取失败！");
+        }
+      });
     };
 
     const submit_sailing = () => {
@@ -432,17 +488,21 @@ export default {
         if(valid) {
           query.method = 'settleAccount';
           query.args = [new_sailing.dist];
-          invokeContract(query).then(res => {
+          invokeContract(query).then((res) => {
             if(res.state === 200) {
-              ElMessage.success("调用成功");
+              ElMessage.success("碳足迹结算成功！");
               new_sailing.tx_id = res.data.txId;
               sailing_record.value.push(new_sailing);
             }
+            else {
+              ElMessage.error("碳足迹结算失败！");
+            }
           });
-        }else {
+        }
+        else {
           return false;
         }
-      })
+      });
     }
 
     const submit_tx = () => {
@@ -450,19 +510,23 @@ export default {
         if(valid) {
           query.method = 'transfer';
           query.args = [pk.value.pubKeyHex, new_tx.to, new_tx.amount];
-          invokeContract(query).then(res => {
+          invokeContract(query).then((res) => {
             if(res.state === 200) {
-              ElMessage.success("调用成功");
+              ElMessage.success("交易成功！");
               new_tx.time = new Date();
               new_tx.from = pk.value.pubKeyHex;
               new_tx.tx_id = res.data.txId;
               transaction_record.value.push(new_tx);
             }
+            else {
+              ElMessage.error("交易失败！");
+            }
           });
-        }else {
+        }
+        else {
           return false;
         }
-      })
+      });
     };
 
     const update = () => {
@@ -471,27 +535,12 @@ export default {
       getRequiredEEXI();
     }
 
-    (() => {
-      let query = {
-        id: 1
-      };
-      let keypair = { sk: '', pk: '' };
-      fetchPrivateKey(query).then((res) => {
-        keypair.sk = res;
-        fetchPublicKey(query).then((res) => {
-          keypair.pk = res;
-          sk.value = KEYUTIL.getKey(keypair.sk);
-          pk.value = KEYUTIL.getKey(keypair.pk.replaceAll(" EC ", " "));
-        });
-      });
-    })();
-
     return {
       activeNavMenu,
       formRef,
       isNavSelected,
       onSelectNavMenu,
-      shipType,
+      ship_type,
       tonnage,
       onShipTypeChange,
       form,
