@@ -1,0 +1,343 @@
+{
+  "ship_type": [
+    {
+      "label": "集装箱船",
+      "value": 0
+    },
+    {
+      "label": "油轮",
+      "value": 1
+    },
+    {
+      "label": "气体船",
+      "value": 2
+    },
+    {
+      "label": "冷冻货船",
+      "value": 3
+    },
+    {
+      "label": "散货船",
+      "value": 4
+    }
+  ],
+  "all_tonnage": [
+    [
+      {
+        "label": "10000及以上但小于15000载重吨",
+        "value": 0
+      },
+      {
+        "label": "15000及以上但小于40000载重吨",
+        "value": 1
+      },
+      {
+        "label": "40000及以上但小于80000载重吨",
+        "value": 2
+      },
+      {
+        "label": "80000及以上但小于120000载重吨",
+        "value": 3
+      },
+      {
+        "label": "120000及以上但小于200000载重吨",
+        "value": 4
+      },
+      {
+        "label": "200000及以上载重吨",
+        "value": 5
+      }
+    ],
+    [
+      {
+        "label": "4000及以上但小于20000载重吨",
+        "value": 0
+      },
+      {
+        "label": "20000及以上但小于200000载重吨",
+        "value": 1
+      },
+      {
+        "label": "200000及以上载重吨",
+        "value": 2
+      }
+    ],
+    [
+      {
+        "label": "2000及以上但小于10000载重吨",
+        "value": 0
+      },
+      {
+        "label": "10000及以上但小于15000载重吨",
+        "value": 1
+      },
+      {
+        "label": "15000及以上载重吨",
+        "value": 2
+      }
+    ],
+    [
+      {
+        "label": "3000及以上但小于5000载重吨",
+        "value": 0
+      },
+      {
+        "label": "5000及以上载重吨",
+        "value": 1
+      }
+    ],
+    [
+      {
+        "label": "10000及以上但小于20000载重吨",
+        "value": 0
+      },
+      {
+        "label": "20000及以上但小于200000载重吨",
+        "value": 1
+      },
+      {
+        "label": "200000及以上载重吨",
+        "value": 2
+      }
+    ]
+  ],
+  "X": [
+    [
+      10,
+      20,
+      30,
+      35,
+      45,
+      50
+    ],
+    [
+      10,
+      20,
+      15
+    ],
+    [
+      10,
+      20,
+      30
+    ],
+    [
+      7.5,
+      15
+    ],
+    [
+      10,
+      20,
+      15
+    ]
+  ],
+  "oil_type": [
+    {
+      "label": "柴油",
+      "value": 0
+    },
+    {
+      "label": "轻燃油",
+      "value": 1
+    },
+    {
+      "label": "重燃油",
+      "value": 2
+    },
+    {
+      "label": "液化石油气",
+      "value": 3
+    },
+    {
+      "label": "天然气",
+      "value": 4
+    }
+  ],
+  "CF": [
+    3.206000,
+    3.151040,
+    3.114400,
+    3.000000,
+    2.750000
+  ],
+  "AC": [
+    [
+      186.52,
+      0.200
+    ],
+    [
+      1218.80,
+      0.488
+    ],
+    [
+      1120.00,
+      0.456
+    ],
+    [
+      227.01,
+      0.244
+    ],
+    [
+      961.79,
+      0.477
+    ]
+  ],
+  "cap_fac": [
+    [
+      0.7,
+      0
+    ],
+    [
+      1,
+      0
+    ],
+    [
+      1,
+      0
+    ],
+    [
+      1,
+      0
+    ]
+  ],
+  "rules": {
+    "type": {
+      "required": true
+    },
+    "carry_tonnage": {
+      "required": true
+    },
+    "speed": [
+      {
+        "required": true,
+        "message": "请输入航行速度",
+        "trigger": "submit"
+      },
+      {
+        "type": "number",
+        "message": "请输入数字"
+      }
+    ],
+    "total_tonnage": [
+      {
+        "required": true,
+        "message": "请输入船总吨位",
+        "trigger": "submit"
+      },
+      {
+        "type": "number",
+        "message": "请输入数字"
+      }
+    ],
+    "main_engine_amount": {
+      "required": true
+    },
+    "mcr": [
+      {
+        "required": true,
+        "message": "请输入主引擎的最大持续额定出力",
+        "trigger": "submit"
+      },
+      {
+        "type": "number",
+        "message": "请输入数字"
+      }
+    ],
+    "mcr_lim": [
+      {
+        "required": true,
+        "message": "请输入主引擎的受限最大持续额定出力",
+        "trigger": "submit"
+      },
+      {
+        "type": "number",
+        "message": "请输入数字"
+      }
+    ],
+    "amcr": [
+      {
+        "required": true,
+        "message": "请输入副引擎的最大持续额定出力",
+        "trigger": "submit"
+      },
+      {
+        "type": "number",
+        "message": "请输入数字"
+      }
+    ],
+    "main_oil_type": {
+      "required": true
+    },
+    "main_oil_rate": [
+      {
+        "required": true,
+        "message": "请输入主引擎燃油消耗率",
+        "trigger": "submit"
+      },
+      {
+        "type": "number",
+        "message": "请输入数字"
+      }
+    ],
+    "aux_oil_type": {
+      "required": true
+    },
+    "aux_oil_rate": [
+      {
+        "required": true,
+        "message": "请输入副引擎燃油消耗率",
+        "trigger": "submit"
+      },
+      {
+        "type": "number",
+        "message": "请输入数字"
+      }
+    ]
+  },
+  "new_tx_rules": {
+    "amount": [{
+      "required": true,
+      "message": "请输入交易碳积分数量",
+      "trigger": "submit"
+    },{
+      "type": "number",
+      "message": "请输入数字",
+      "trigger": "submit"
+    }],
+    "to": {
+      "required": true,
+      "message": "请输入交易方",
+      "trigger": "submit"
+    }
+  },
+  "new_sailing_rules": {
+    "time_start": {
+      "required": true,
+      "message": "请输入出发时间",
+      "trigger": "submit"
+    },
+    "time_end": {
+      "required": true,
+      "message": "请输入到达时间",
+      "trigger": "submit"
+    },
+    "from": {
+      "required": true,
+      "message": "请输入起点",
+      "trigger": "submit"
+    },
+    "to": {
+      "required": true,
+      "message": "请输入终点",
+      "trigger": "submit"
+    },
+    "dist": [{
+      "required": true,
+      "message": "请输入航程",
+      "trigger": "submit"
+    },{
+      "type": "number",
+      "message": "请输入数字",
+      "trigger": "submit"
+    }]
+  }
+}
