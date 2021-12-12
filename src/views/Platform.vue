@@ -42,14 +42,17 @@
                   ></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="船舶载重吨" prop="carry_tonnage" class="ifl">
-                <el-select v-model="form.carry_tonnage" id="ship-tonnage">
+              <el-form-item label="船舶载重吨位" prop="carry_tonnage" class="ifl">
+                <el-select v-model="form.carry" id="ship-tonnage">
                   <el-option
                       v-for="item in tonnage"
                       :label="item.label"
                       :value="item.value"
                       :key="item.value"></el-option>
                 </el-select>
+              </el-form-item>
+              <el-form-item label="船舶载重" prop="total_tonnage" class="ifl">
+                <el-input v-model.number="form.carry_tonnage"><template #suffix>吨</template></el-input>
               </el-form-item>
               <el-form-item label="航速" prop="speed" class="ifl">
                 <el-input v-model.number="form.speed"><template #suffix>节</template></el-input>
@@ -296,7 +299,8 @@ export default {
     const current_eexi = ref(0);
     const form = reactive({
       type: 0,
-      carry_tonnage: 0,
+      carry: 0,
+      carry_tonnage: '',
       total_tonnage: '',
       speed: '',
       main_engine_amount: 1,
@@ -356,7 +360,7 @@ export default {
             if(res.state === 200) {
               ElMessage.success("调用成功！");
               const ac = data.AC[form.type];
-              const X = data.X[form.type];
+              const X = data.X[form.type][form.carry];
               const require_eexi = (1 - X / 100) * ac[0] * Math.pow(form.carry_tonnage, -ac[1]);
               query.method = 'register';
               query.args = [account, X, ac[0], form.carry_tonnage, ac[1], require_eexi];
