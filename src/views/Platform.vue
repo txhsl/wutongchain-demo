@@ -1,227 +1,541 @@
 <template>
-    <div>
-        <div class="container">
-        <el-menu
-        :default-active="activeNavMenu"
-        mode="horizontal"
-        background-color="#545c64"
-        text-color="#fff"
-        active-text-color="#ffd04b"
-        @select="onSelectNavMenu"
-        >
+  <div>
+    <div class="crumbs">
+      <el-breadcrumb separator="/">
+        <el-breadcrumb-item>
+          <i class="el-icon-lx-apps"></i> 碳排放平台
+        </el-breadcrumb-item>
+      </el-breadcrumb>
+    </div>
+    <div class="container">
+      <el-menu
+          :default-active="activeNavMenu"
+          mode="horizontal"
+          background-color="#545c64"
+          text-color="#fff"
+          active-text-color="#ffd04b"
+          @select="onSelectNavMenu"
+      >
         <el-menu-item index="1">首页</el-menu-item>
         <el-menu-item index="2">指标认定</el-menu-item>
         <el-menu-item index="3">碳足迹结算</el-menu-item>
         <el-menu-item index="4">碳积分交易</el-menu-item>
         <el-menu-item index="5">我的</el-menu-item>
-        </el-menu>
-        <div v-if="isNavSelected('1')">
+      </el-menu>
+      <div v-if="isNavSelected('1')">
 
-        </div>
-        <div v-if="isNavSelected('2')">
-        <div class="form-box mt20">
-            <el-form ref="formRef" :rules="rules" :model="form" label-width="100px">
-            <el-form-item label="船舶类型" prop="type">
-                <el-select v-model="activeShipType" @change="onShipTypeChange" id="ship-type">
-                <el-option
-                    v-for="item in shipType"
-                    :label="item.label"
-                    :value="item.value"
-                    :key="item.value"
-                ></el-option>
+      </div>
+      <div v-if="isNavSelected('2')">
+        <div class="form-box">
+          <el-form ref="formRef" :rules="rules" :model="form" label-width="165px">
+            <el-card class="mt20">
+              <template #header>
+                <span>基本信息</span>
+              </template>
+              <el-form-item label="船舶类型" prop="type" class="ifl">
+                <el-select v-model="form.type" @change="onShipTypeChange" id="ship-type">
+                  <el-option
+                      v-for="item in shipType"
+                      :label="item.label"
+                      :value="item.value"
+                      :key="item.value"
+                  ></el-option>
                 </el-select>
-            </el-form-item>
-            <el-form-item label="船舶吨位" prop="tonnage">
-                <el-select v-model="activeTonnage" id="ship-tonnage">
-                <el-option
-                    v-for="item in tonnage"
-                    :label="item.label"
-                    :value="item.value"
-                    :key="item.value"></el-option>
+              </el-form-item>
+              <el-form-item label="船舶载重吨" prop="carry_tonnage" class="ifl">
+                <el-select v-model="form.carry_tonnage" id="ship-tonnage">
+                  <el-option
+                      v-for="item in tonnage"
+                      :label="item.label"
+                      :value="item.value"
+                      :key="item.value"></el-option>
                 </el-select>
+              </el-form-item>
+              <el-form-item label="航速" prop="speed" class="ifl">
+                <el-input v-model.number="form.speed"><template #suffix>节</template></el-input>
+              </el-form-item>
+              <el-form-item label="船舶总吨位" prop="total_tonnage" class="ifl">
+                <el-input v-model.number="form.total_tonnage"><template #suffix>吨</template></el-input>
+              </el-form-item>
+            </el-card>
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-card>
+                  <template #header>
+                    <span>主引擎</span>
+                  </template>
+                  <el-form-item label="主引擎数量" prop="main_engine_amount">
+                    <el-input-number :min="1" :step="1" v-model="form.main_engine_amount"></el-input-number>
+                  </el-form-item>
+                  <el-form-item label="最大持续额定出力" prop="mcr">
+                    <el-input v-model.number="form.mcr"><template #suffix>千瓦</template></el-input>
+                  </el-form-item>
+                  <el-form-item label="受限最大持续额定出力" prop="mcr_lim">
+                    <el-input v-model.number="form.mcr_lim"><template #suffix>千瓦</template></el-input>
+                  </el-form-item>
+                  <el-form-item label="燃油类型" prop="main_oil_type">
+                    <el-select v-model="form.main_oil_type">
+                      <el-option v-for="item in oil_type"
+                                 :label="item.label"
+                                 :value="item.value"></el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item label="燃油消耗率" prop="main_oil_rate">
+                    <el-input v-model.number="form.main_oil_rate"><template #suffix>克/千瓦时</template></el-input>
+                  </el-form-item>
+                </el-card>
+              </el-col>
+              <el-col :span="12">
+                <el-card>
+                  <template #header>
+                    <span>副引擎</span>
+                  </template>
+                  <el-form-item label="最大持续额定出力" prop="amcr">
+                    <el-input v-model.number="form.amcr"><template #suffix>千瓦</template></el-input>
+                  </el-form-item>
+                  <el-form-item label="燃油类型" prop="aux_oil_type">
+                    <el-select v-model="form.aux_oil_type">
+                      <el-option v-for="item in oil_type"
+                                 :label="item.label"
+                                 :value="item.value"></el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item label="燃油消耗率" prop="aux_oil_rate">
+                    <el-input v-model.number="form.aux_oil_rate"><template #suffix>克/千瓦时</template></el-input>
+                  </el-form-item>
+                </el-card>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-button type="primary" @click="calEEXI" class="div_center">计算EEXI</el-button>
+            </el-row>
+          </el-form>
+        </div>
+      </div>
+      <div v-if="isNavSelected('3')">
+        <el-card class="mt20">
+          <template #header>
+            <strong>添加航程</strong>
+          </template>
+          <el-form :model="new_sailing" :inline="true" :rules="new_sailing_rules" ref="sailing_ref">
+            <el-form-item label="出发时间" prop="time_start">
+              <el-date-picker
+                  v-model="new_sailing.time_start"
+                  type="date"
+                  format="YYYY/MM/DD"
+                  value-format="YYYY-MM-DD"
+              ></el-date-picker>
             </el-form-item>
-            <el-form-item label="主发动机功率" prop="mainPower">
-                <el-input v-model="form.mainPower"></el-input>
+            <el-form-item label="起点" prop="from">
+              <el-input v-model="new_sailing.from"></el-input>
             </el-form-item>
-            <el-form-item label="副发动机功率" prop="mainPower">
-                <el-input v-model="form.subPower"></el-input>
+            <el-form-item label="到达时间" prop="time_end">
+              <el-date-picker
+                  v-model="new_sailing.time_end"
+                  type="date"
+                  format="YYYY/MM/DD"
+                  value-format="YYYY-MM-DD"
+              ></el-date-picker>
             </el-form-item>
-            <el-button type="primary" @click="calEEXI">计算EEXI</el-button>
-            </el-form>
-        </div>
-        </div>
-        <div v-if="isNavSelected('3')">
+            <el-form-item label="终点" prop="to">
+              <el-input v-model="new_sailing.to"></el-input>
+            </el-form-item>
+            <el-form-item label="航程" prop="dist">
+              <el-input v-model.number="new_sailing.dist">
+                <template #suffix>千米</template>
+              </el-input>
+            </el-form-item>
+          </el-form>
+          <el-row>
+            <el-button type="primary" class="div_center" @click="submit_sailing">提交航程</el-button>
+          </el-row>
 
-        </div>
-        <div v-if="isNavSelected('4')">
+        </el-card>
+        <el-card class="mt20">
+          <template #header>
+            <strong>航程记录</strong>
+          </template>
+          <el-table :data="sailing_record" border class="table" header-cell-class-name="table-header">
+            <el-table-column prop="time_start" label="出发时间"></el-table-column>
+            <el-table-column prop="from" label="起点"></el-table-column>
+            <el-table-column prop="time_end" label="到达时间"></el-table-column>
+            <el-table-column prop="to" label="终点"></el-table-column>
+            <el-table-column prop="dist" label="航程"></el-table-column>
+            <el-table-column prop="amount" label="所获碳积分"></el-table-column>
+            <el-table-column prop="tx_id" label="交易ID"></el-table-column>
+          </el-table>
+        </el-card>
+      </div>
+      <div v-if="isNavSelected('4')">
+        <el-card class="mt20">
+          <template #header>
+            <strong>发起交易</strong>
+          </template>
+          <el-form :model="new_tx" :inline="true" :rules="new_tx_rules" ref="tx_ref">
+            <el-form-item label="接收方" prop="to">
+              <el-input v-model="new_tx.to"></el-input>
+            </el-form-item>
+            <el-form-item label="碳积分数量" prop="amount">
+              <el-input v-model.number="new_tx.amount"></el-input>
+            </el-form-item>
+            <el-row>
+              <el-button type="primary" class="div_center" @click="submit_tx">发起交易</el-button>
+            </el-row>
+          </el-form>
+        </el-card>
+        <el-card class="mt20">
+          <template #header>
+            <strong>交易记录</strong>
+          </template>
+          <el-table :data="transaction_record" border class="table" header-cell-class-name="table-header">
+            <el-table-column prop="time" label="时间"></el-table-column>
+            <el-table-column prop="from" label="发起方"></el-table-column>
+            <el-table-column prop="to" label="接收方"></el-table-column>
+            <el-table-column prop="amount" label="碳积分数量"></el-table-column>
+            <el-table-column prop="tx_id" label="交易ID"></el-table-column>
+          </el-table>
+        </el-card>
+      </div>
+      <div v-if="isNavSelected('5')">
+        <el-card>
+          <template #header>
+            <strong>船基本信息</strong>
+          </template>
+          <el-descriptions
+              direction="vertical"
+              border
+              :column="5"
+          >
+            <el-descriptions-item label="船主">Saturn</el-descriptions-item>
+            <el-descriptions-item label="船厂">福州船政局</el-descriptions-item>
+            <el-descriptions-item label="船体编号">12345</el-descriptions-item>
+            <el-descriptions-item label="国际海事组织编号">94112XX</el-descriptions-item>
+            <el-descriptions-item label="船体类型">散装货轮</el-descriptions-item>
+          </el-descriptions>
+        </el-card>
+        <el-card>
+          <template #header>
+            <strong>船体参数</strong>
+          </template>
+          <el-descriptions
+              direction="vertical"
+              border
+              :column="3"
+          >
+            <el-descriptions-item label="全长">250.0米</el-descriptions-item>
+            <el-descriptions-item label="型长">240.0米</el-descriptions-item>
+            <el-descriptions-item label="型宽">40.0米</el-descriptions-item>
+            <el-descriptions-item label="型深">20.0米</el-descriptions-item>
+            <el-descriptions-item label="夏季吃水线">14.0米</el-descriptions-item>
+            <el-descriptions-item label="处于夏季吃水线时的载重量">150,000吨</el-descriptions-item>
+          </el-descriptions>
+        </el-card>
+        <el-card>
+          <template #header>
+            <strong>我的碳积分</strong>
+          </template>
+          <el-descriptions
+            direction="vertical"
+            border
+            :column="4">
+            <el-descriptions-item label="当前积分">{{balance}}</el-descriptions-item>
+            <el-descriptions-item label="标准EEXI">{{required_eexi}}</el-descriptions-item>
+            <el-descriptions-item label="当前EEXI">{{current_eexi}}</el-descriptions-item>
+            <el-descriptions-item label="是否允许出航">{{current_eexi <= required_eexi ? '是' : '否'}}</el-descriptions-item>
+          </el-descriptions>
+          <el-row>
+            <el-button type="primary" class="div_center" @click="update">更新信息</el-button>
+          </el-row>
+        </el-card>
 
-        </div>
-        <div v-if="isNavSelected('5')">
-        <el-row>
-            <el-col :span="2">
-            <el-menu
-                :default-active="activeMeMenu"
-                mode="vertical"
-                active-text-color="#ffd04b"
-                background-color="#545c64"
-                text-color="#fff"
-                @select="onSelectMeMenu"
-                class="me-menu"
-            >
-                <el-menu-item index="1">通用</el-menu-item>
-                <el-menu-item index="2">我的积分</el-menu-item>
-                <el-menu-item index="3">交易记录</el-menu-item>
-            </el-menu>
-            </el-col>
-            <el-col :span="22">
-            <div v-if="isMeMenuSelected('1')">
-
-            </div>
-            <div v-if="isMeMenuSelected('2')">
-
-            </div>
-            <div v-if="isMeMenuSelected('3')">
-
-            </div>
-            </el-col>
-        </el-row>
-
-        </div>
-        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-import { reactive, ref } from "vue";
-
+import {reactive, ref} from "vue";
+import data from '/public/data.json'
+import {fetchPrivateKey, fetchPublicKey, invokeContract, queryContract} from "../api";
+import {ElMessage} from "element-plus";
+import {KEYUTIL} from "jsrsasign";
 export default {
-    name: "Platform",
-    setup() {
-        const activeNavMenu = ref("1");
-        const activeMeMenu = ref("1");
+  name: "Platform",
+  setup() {
+    const activeNavMenu = ref("1");
+    const formRef = ref(null);
+    const sailing_ref = ref(null);
+    const tx_ref = ref(null);
+    const pk = ref();
+    const sk = ref();
+    const query = reactive({
+      category: "wvm",
+      file: "",
+      name: "95669c2b4e63edc0978e1d3c85d623552b6f600d05e55cd910c528217bcb2a7f",
+      method: '',
+      args:[]
+    });
+    const new_tx = reactive({
+      time: '',
+      from:'',
+      to: '',
+      amount: '',
+      tx_id: ''
+    });
+    const new_sailing = reactive({
+      from: '',
+      time_start: '',
+      to: '',
+      time_end: '',
+      dist: '',
+      amount: '',
+      tx_id: ''
+    })
+    const balance = ref(0);
+    const required_eexi = ref(0);
+    const current_eexi = ref(0);
+    const form = reactive({
+      type: 0,
+      carry_tonnage: 0,
+      total_tonnage: '',
+      speed: '',
+      main_engine_amount: 1,
+      mcr: '',
+      mcr_lim: '',
+      amcr: '',
+      main_oil_rate: '',
+      aux_oil_rate: '',
+      main_oil_type: 0,
+      aux_oil_type: 0
+    });
+    const sailing_record = ref([]);
+    const transaction_record = ref([]);
+    const rules = data.rules;
+    const new_sailing_rules = data.new_sailing_rules;
+    const new_tx_rules = data.new_tx_rules;
+    const oil_type = ref(data.oil_type);
+    const shipType = ref(data.ship_type);
+    const tonnage = ref(data.all_tonnage[form.carry_tonnage]);
 
-        const activeShipType = ref(0);
-        const activeTonnage = ref(0);
-        const shipType = ref([
-        {
-            label: "集装箱船",
-            value: 0,
-        },
-        {
-            label: "油轮",
-            value: 1,
-        },
-        {
-            label: "普通货船",
-            value: 2,
-        },
-        ]);
 
-        const allTonnage = [
-        [
-            {
-            label: "10000及以上但小于15000载重吨",
-            value: 0,
-            },
-            {
-            label: "15000及以上但小于40000载重吨",
-            value: 1,
-            },
-            {
-            label: "40000及以上但小于80000载重吨",
-            value: 2,
-            },
-            {
-            label: "80000及以上但小于120000载重吨",
-            value: 3,
-            },
-            {
-            label: "120000及以上但小于200000载重吨",
-            value: 4,
-            },
-            {
-            label: "200000及以上载重吨",
-            value: 5,
-            },
-        ],
-        [
-            {
-            label: "4000及以上但小于20000载重吨",
-            value: 0,
-            },
-            {
-            label: "20000及以上但小于200000载重吨",
-            value: 1,
-            },
-            {
-            label: "200000及以上载重吨",
-            value: 2,
-            },
-        ],
-        [
-            {
-            label: "3000及以上但小于15000载重吨",
-            value: 0,
-            },
-            {
-            label: "15000及以上载重吨",
-            value: 1,
-            },
-        ],
-        ];
-        const tonnage = ref(allTonnage[activeTonnage.value]);
-        const form = reactive({
-        type: "",
-        tonnage: "",
-        mainPower: "",
-        subPower: "",
+    const onShipTypeChange = (val) => {
+      tonnage.value = data.all_tonnage[val];
+      form.carry_tonnage = 0;
+    };
+    const isNavSelected = (index) => activeNavMenu.value === index;
+    const onSelectNavMenu = (key) => {
+      activeNavMenu.value = key;
+    };
+    const calEEXI = () => {
+      formRef.value.validate((valid) => {
+        if(valid) {
+          const account = pk.value.pubKeyHex;
+          const MEA = form.main_engine_amount;
+          const MEP = Math.min(form.mcr * 0.75, form.mcr_lim * 0.83);
+          const MEC = data.CF[form.main_oil_type];
+          const MESFC = form.main_oil_rate;
+
+          const AEP = form.amcr * 0.5;
+          const AEC = data.CF[form.aux_oil_type];
+          const AESFC = form.aux_oil_rate;
+
+          const cap_fac = data.cap_fac[form.type];
+          const capacity = cap_fac[0] * form.carry_tonnage + cap_fac[1] * form.total_tonnage;
+          const velocity = form.speed;
+          query.method = "register";
+          query.args = [account, MEA, MEP, MEC, MESFC, AEP, AEC, AESFC, capacity, velocity];
+          let msg = JSON.stringify(query);
+          let sig = sign(msg);
+          if(validate(msg, sig)) {
+            ElMessage.success("验证成功");
+          }else {
+            ElMessage.error("验证失败");
+            return;
+          }
+          invokeContract(query).then((res) => {
+            if(res.state === 200) {
+              ElMessage.success("调用成功！");
+              const ac = data.AC[form.type];
+              const X = data.X[form.type];
+              const require_eexi = (1 - X / 100) * ac[0] * Math.pow(form.carry_tonnage, -ac[1]);
+              query.method = 'register';
+              query.args = [account, X, ac[0], form.carry_tonnage, ac[1], require_eexi];
+              invokeContract(query).then(res => {
+                if(res.state !== 200) {
+                  ElMessage.error("更新标准EEXI值失败");
+                }
+              })
+            }
+            else {
+              ElMessage.error("调用失败！");
+            }
+          });
+        }else {
+          return false;
+        }
+      })
+    };
+
+    const sign = (msg) => {
+      let sig = new KJUR.crypto.Signature({"alg": "SM3withECDSA", "prov": "cryptojs/jsrsa"});
+      sig.initSign({"ecprvhex": sk.value.prvKeyHex, "eccurvename": "secp256r1"});
+      sig.updateString(msg);
+      return sig.sign();
+    };
+
+    const validate = (msg, attained_sig) => {
+      let sig = new KJUR.crypto.Signature({"alg": "SM3withECDSA", "prov": "cryptojs/jsrsa"});
+      sig.initVerifyByPublicKey({"ecpubhex": pk.value.pubKeyHex, "eccurvename": "secp256r1"});
+      sig.updateString(msg);
+      return sig.verify(attained_sig);
+    };
+
+    const getBalance = () => {
+      query.method = 'balanceOf';
+      query.args = [pk.value.pubKeyHex];
+      queryContract(query).then(res => {
+        if(res.state === 200){
+          ElMessage.success("更新碳积分成功!");
+          balance.value = res.data.result;
+        }
+      })
+    };
+
+    const getRequiredEEXI = () => {
+      query.method = 'getRequiredEEXI';
+      query.args = [pk.value.pubKeyHex];
+      queryContract(query).then(res => {
+        if(res.state === 200){
+          ElMessage.success("更新标准EEXI成功!");
+          required_eexi.value = res.data.result;
+        }
+      })
+    };
+
+    const getCurrentEEXI = () => {
+      query.method = 'getCurrentEEXI';
+      query.args = [pk.value.pubKeyHex];
+      queryContract(query).then(res => {
+        if(res.state === 200){
+          ElMessage.success("更新当前EEXI成功!");
+          current_eexi.value = res.data.result;
+        }
+      })
+    };
+
+    const submit_sailing = () => {
+      sailing_ref.value.validate(valid => {
+        if(valid) {
+          query.method = 'settleAccount';
+          query.args = [new_sailing.dist];
+          invokeContract(query).then(res => {
+            if(res.state === 200) {
+              ElMessage.success("调用成功");
+              new_sailing.tx_id = res.data.txId;
+              sailing_record.value.push(new_sailing);
+            }
+          });
+        }else {
+          return false;
+        }
+      })
+    }
+
+    const submit_tx = () => {
+      tx_ref.value.validate(valid => {
+        if(valid) {
+          query.method = 'transfer';
+          query.args = [pk.value.pubKeyHex, new_tx.to, new_tx.amount];
+          invokeContract(query).then(res => {
+            if(res.state === 200) {
+              ElMessage.success("调用成功");
+              new_tx.time = new Date();
+              new_tx.from = pk.value.pubKeyHex;
+              new_tx.tx_id = res.data.txId;
+              transaction_record.value.push(new_tx);
+            }
+          });
+        }else {
+          return false;
+        }
+      })
+    };
+
+    const update = () => {
+      getBalance();
+      getCurrentEEXI();
+      getRequiredEEXI();
+    }
+
+    (() => {
+      let query = {
+        id: 1
+      };
+      let keypair = { sk: '', pk: '' };
+      fetchPrivateKey(query).then((res) => {
+        keypair.sk = res;
+        fetchPublicKey(query).then((res) => {
+          keypair.pk = res;
+          sk.value = KEYUTIL.getKey(keypair.sk);
+          pk.value = KEYUTIL.getKey(keypair.pk.replaceAll(" EC ", " "));
         });
-        const rules = {};
+      });
+    })();
 
-        const onShipTypeChange = (val) => {
-        tonnage.value = allTonnage[val];
-        activeTonnage.value = 0;
-        };
-        const isNavSelected = (index) => activeNavMenu.value === index;
-        const isMeMenuSelected = (index) => activeMeMenu.value === index;
-        const onSelectNavMenu = (key) => {
-        activeNavMenu.value = key;
-        };
-        const onSelectMeMenu = (key) => {
-        activeMeMenu.value = key;
-        };
-        const calEEXI = () => {};
-        return {
-        activeNavMenu,
-        isNavSelected,
-        activeMeMenu,
-        onSelectNavMenu,
-        isMeMenuSelected,
-        onSelectMeMenu,
-        shipType,
-        activeShipType,
-        activeTonnage,
-        tonnage,
-        onShipTypeChange,
-        form,
-        rules,
-        calEEXI,
-        };
-    },
+    return {
+      activeNavMenu,
+      formRef,
+      isNavSelected,
+      onSelectNavMenu,
+      shipType,
+      tonnage,
+      onShipTypeChange,
+      form,
+      rules,
+      calEEXI,
+      oil_type,
+      transaction_record,
+      sailing_record,
+      new_tx,
+      new_sailing,
+      submit_sailing,
+      submit_tx,
+      new_sailing_rules,
+      new_tx_rules,
+      tx_ref,
+      sailing_ref,
+      required_eexi,
+      current_eexi,
+      balance,
+      update
+    };
+  },
 };
 </script>
 
 <style scoped>
-.me-menu {
-    text-align: center;
+.form-box {
+  margin-top: 20px;
+  width: 100%;
 }
+
 .mt20 {
-    margin-top: 20px;
+  margin-top: 20px;
 }
+
 :deep(#ship-type) {
-    width: 120px;
+  width: 120px;
 }
+
 :deep(#ship-tonnage) {
-    width: 260px;
+  width: 260px;
+}
+:deep(.ifl) {
+  display: inline-flex;
+}
+
+.div_center {
+  position: relative;
+  margin: 20px auto 0 auto;
 }
 </style>
