@@ -1,118 +1,49 @@
-contract CarbonMarket {
-
-    public string name = "CarbonMarket"
-
+contract Test {
+    
+    public string name = "Test"
+    
     public uint8 decimals = 4
-
-    struct Archive {
-        int MEA
-        int MEP
-        float MEC
-        float MESFC
-
-        int AEP
-        float AEC
-        float AESFC
-
-        float capacity
-        float velocity
-
-        float coefficient
-    }
-
-    struct Required {
-        int X
-        float a
-        float b
-        float c
-        float coefficient
-    }
-
+    
     public string getName() {
         return name
     }
-
+    
     public uint8 getDecimals() {
         return decimals
     }
 
-    public string register(string account, int X, float a, float b, float c, float coefficient) {
-        Required req
-        req.X = X
-        req.a = a
-        req.b = b
-        req.c = c
-        req.coefficient = coefficient
-        string json = obj_to_json(req)
-        db_set(account + "_EEXIA", json)
+    public string register(string account) {
+        db_set(account, 0)
+        
         event(name + "_register", account)
         return "success"
     }
-
-    public string updateArchive(string account, int MEA, int MEP, float MEC, float MESFC, int AEP, float AEC, float AESFC, float capacity, float velocity) {
-        Archive arc
-        arc.MEA = MEA
-        arc.MEP = MEP
-        arc.MEC = MEC
-        arc.MESFC = MESFC
-        arc.AEP = AEP
-        arc.AEC = AEC
-        arc.AESFC = AESFC
-        arc.capacity = capacity
-        arc.velocity = velocity
-        arc.coefficient = (MEA * MEP * MEC * MESFC + AEP * AEC * AESFC) / (capacity * velocity)
-
-        string json = obj_to_json(arc)
-        db_set(account + "_EEXIB", json)
-        event(name + "_update", account)
+    
+    public uint64 balanceOf(string account) {
+        return db_get<uint64>(account)
+    }
+    
+    public string mint(string to, uint64 amount) {
+        uint64 balance = db_get<uint64>(to)
+        if(balance + amount > balance) {
+            balance = balance + amount
+            db_set(to, balance)
+        }
+        
+        event(name + "_mint", to)
         return "success"
     }
-
-    public float getRequiredEEXI(string account) {
-        string json = db_get<string>(account + "_EEXIA")
-        Archive arc = json_to_obj<Archive>(json)
-        return arc.coefficient
-    }
-
-    public float getCurrentEEXI(string account) {
-        string json = db_get<string>(account + "_EEXIB")
-        Archive arc = json_to_obj<Archive>(json)
-        return arc.coefficient
-    }
-
-    public float getFactor(string account) {
-        string jsonA = db_get<string>(account + "_EEXIA")
-        string jsonB = db_get<string>(account + "_EEXIB")
-        Archive arcA = json_to_obj<Archive>(jsonA)
-        Archive arcB = json_to_obj<Archive>(jsonB)
-        return arcA.coefficient - arcB.coefficient
-    }
-
-    public string settleAccount(string account, int distance) {
-        float factor = getFactor(account)
-        float balance = db_get<float>(account + "_balance")
-
-        balance += factor * distance
-
-        db_set(account + "_balance", balance)
-        event(name + "_settle", account)
-        return "success"
-    }
-
-    public float balanceOf(string account) {
-        return db_get<float>(account + "_balance")
-    }
-
-    public string transfer(string from, string to, int amount) {
-        float balanceA = db_get<float>(from + "_balance")
-        float balanceB = db_get<float>(to + "_balance")
-
+    
+    public string transfer(string from, string to, uint64 amount) {
+        uint64 balanceA = db_get<uint64>(from)
+        uint64 balanceB = db_get<uint64>(to)
+        
         if(balanceA >= amount && balanceB + amount > balanceB) {
             balanceA = balanceA - amount
             balanceB = balanceB + amount
 
-            db_set(from + "_balance", balanceA)
-            db_set(to + "_balance", balanceB)
+            db_set(from, balanceA)
+            db_set(to, balanceB)
             event(name + "_transfer", to)
         }
         else {

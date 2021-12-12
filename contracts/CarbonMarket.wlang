@@ -5,18 +5,26 @@ contract CarbonMarket {
     public uint8 decimals = 4
 
     struct Archive {
-        int MEA        // 主引擎数量
-        int MEP        // 主引擎功率
-        float MEC        // 主引擎碳转化率
-        float MESFC        // 主引擎燃油消耗率
+        int MEA
+        int MEP
+        float MEC
+        float MESFC
 
-        int AEP        // 副引擎功率
-        float AEC        // 副引擎碳转化率
-        float AESFC        // 副引擎燃油消耗率
+        int AEP
+        float AEC
+        float AESFC
 
-        float capacity        // 运载能力
-        float velocity        // 航速
+        float capacity
+        float velocity
 
+        float coefficient
+    }
+
+    struct Required {
+        int X
+        float a
+        float b
+        float c
         float coefficient
     }
 
@@ -28,20 +36,14 @@ contract CarbonMarket {
         return decimals
     }
 
-    public string register(string account, int MEA, int MEP, float MEC, float MESFC, int AEP, float AEC, float AESFC, float capacity, float velocity) {
-        Archive arc
-        arc.MEA = MEA
-        arc.MEP = MEP
-        arc.MEC = MEC
-        arc.MESFC = MESFC
-        arc.AEP = AEP
-        arc.AEC = AEC
-        arc.AESFC = AESFC
-        arc.capacity = capacity
-        arc.velocity = velocity
-        arc.coefficient = (MEA * MEP * MEC * MESFC + AEP * AEC * AESFC) / (capacity * velocity)
-
-        string json = obj_to_json(arc)
+    public string register(string account, int X, float a, float b, float c, float coefficient) {
+        Required req
+        req.X = X
+        req.a = a
+        req.b = b
+        req.c = c
+        req.coefficient = coefficient
+        string json = obj_to_json(req)
         db_set(account + "_EEXIA", json)
         event(name + "_register", account)
         return "success"
@@ -66,22 +68,31 @@ contract CarbonMarket {
         return "success"
     }
 
-    public float getCoefficient(string account) {
+    public float getRequiredEEXI(string account) {
+        string json = db_get<string>(account + "_EEXIA")
+        Required req = json_to_obj<Required>(json)
+        return req.coefficient
+    }
+
+    public float getCurrentEEXI(string account) {
+        string json = db_get<string>(account + "_EEXIB")
+        Archive arc = json_to_obj<Archive>(json)
+        return arc.coefficient
+    }
+
+    public float getFactor(string account) {
         string jsonA = db_get<string>(account + "_EEXIA")
         string jsonB = db_get<string>(account + "_EEXIB")
-        Archive arcA = json_to_obj<Archive>(jsonA)
-        Archive arcB = json_to_obj<Archive>(jsonB)
-        return arcA.coefficient - arcB.coefficient
+        Required req = json_to_obj<Required>(jsonA)
+        Archive arc = json_to_obj<Archive>(jsonB)
+        return req.coefficient - arc.coefficient
     }
 
     public string settleAccount(string account, int distance) {
-        string jsonA = db_get<string>(account + "_EEXIA")
-        string jsonB = db_get<string>(account + "_EEXIB")
-        Archive arcA = json_to_obj<Archive>(jsonA)
-        Archive arcB = json_to_obj<Archive>(jsonB)
+        float factor = getFactor(account)
         float balance = db_get<float>(account + "_balance")
 
-        balance += (arcA.coefficient - arcB.coefficient) * distance
+        balance += factor * distance
 
         db_set(account + "_balance", balance)
         event(name + "_settle", account)
@@ -95,7 +106,7 @@ contract CarbonMarket {
     public string transfer(string from, string to, int amount) {
         float balanceA = db_get<float>(from + "_balance")
         float balanceB = db_get<float>(to + "_balance")
-        
+
         if(balanceA >= amount && balanceB + amount > balanceB) {
             balanceA = balanceA - amount
             balanceB = balanceB + amount
