@@ -23,43 +23,77 @@
         <el-menu-item index="5">我的</el-menu-item>
       </el-menu>
       <div v-if="isNavSelected('1')">
-
+        <div class="container">
+          <div class="handle-box">
+            账本ID：{{ledger}}，
+            连接状况：{{health ? '已连接' : '未连接'}}，
+            账本高度：{{height}}。
+          </div>
+          <el-table :data="memberlist" border class="table" ref="multipleTable" header-cell-class-name="table-header">
+            <el-table-column prop="id" label="ID"></el-table-column>
+            <el-table-column prop="shownName" width="85" label="节点名称"></el-table-column>
+            <el-table-column prop="addr" label="IP"></el-table-column>
+            <el-table-column width="50" label="状态">
+              <template #default="scope">{{scope.row.state ? '离线': '在线'}}</template>
+            </el-table-column>
+            <el-table-column prop="port" width="90" label="RPC端口"></el-table-column>
+            <el-table-column prop="inAddr" label="内网地址"></el-table-column>
+            <el-table-column prop="height" width="80" label="同步高度"></el-table-column>
+            <el-table-column width="80" label="TLS状态">
+              <template #default="scope">{{scope.row.tlsEnabled ? '关闭': '开启'}}</template>
+            </el-table-column>
+            <el-table-column prop="hashType" width="80" label="哈希方式"></el-table-column>
+            <el-table-column prop="consensus" width="80" label="共识算法"></el-table-column>
+          </el-table>
+        </div>
       </div>
       <div v-if="isNavSelected('2')">
         <div class="form-box">
-          <el-form ref="formRef" :rules="rules" :model="form" label-width="165px">
+          <el-form ref="formRef" :rules="rules" :model="form">
             <el-card class="mt20">
               <template #header>
                 <span>基本信息</span>
               </template>
-              <el-form-item label="船舶类型" prop="type" class="ifl">
-                <el-select v-model="form.type" @change="onShipTypeChange" id="ship-type">
-                  <el-option
-                      v-for="item in ship_type"
-                      :label="item.label"
-                      :value="item.value"
-                      :key="item.value"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="船舶载重吨位" prop="carry_tonnage" class="ifl">
-                <el-select v-model="form.carry" id="ship-tonnage">
-                  <el-option
-                      v-for="item in tonnage"
-                      :label="item.label"
-                      :value="item.value"
-                      :key="item.value"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="船舶载重" prop="total_tonnage" class="ifl">
-                <el-input v-model.number="form.carry_tonnage"><template #suffix>吨</template></el-input>
-              </el-form-item>
-              <el-form-item label="航速" prop="speed" class="ifl">
-                <el-input v-model.number="form.speed"><template #suffix>节</template></el-input>
-              </el-form-item>
-              <el-form-item label="船舶总吨位" prop="total_tonnage" class="ifl">
-                <el-input v-model.number="form.total_tonnage"><template #suffix>吨</template></el-input>
-              </el-form-item>
+              <el-row :gutter="20">
+                <el-col :span="4">
+                  <el-form-item label="船舶类型" prop="type" class="ifl">
+                    <el-select v-model="form.type" @change="onShipTypeChange" id="ship-type">
+                      <el-option
+                          v-for="item in ship_type"
+                          :label="item.label"
+                          :value="item.value"
+                          :key="item.value"
+                      ></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="7">
+                  <el-form-item label="船舶载重吨位" prop="carry" class="ifl">
+                    <el-select v-model="form.carry" id="ship-tonnage">
+                      <el-option
+                          v-for="item in tonnage"
+                          :label="item.label"
+                          :value="item.value"
+                          :key="item.value"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="5">
+                  <el-form-item label="船舶载重" prop="carry_tonnage" class="ifl">
+                    <el-input v-model.number="form.carry_tonnage"><template #suffix>吨</template></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="3">
+                  <el-form-item label="航速" prop="speed" class="ifl">
+                    <el-input v-model.number="form.speed" type="number"><template #suffix>节</template></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="5">
+                  <el-form-item label="船舶总吨位" prop="total_tonnage" class="ifl">
+                    <el-input v-model.number="form.total_tonnage"><template #suffix>吨</template></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
             </el-card>
             <el-row :gutter="20">
               <el-col :span="12">
@@ -71,10 +105,10 @@
                     <el-input-number :min="1" :step="1" v-model="form.main_engine_amount"></el-input-number>
                   </el-form-item>
                   <el-form-item label="最大持续额定出力" prop="mcr">
-                    <el-input v-model.number="form.mcr"><template #suffix>千瓦</template></el-input>
+                    <el-input v-model.number="form.mcr" type="number"><template #suffix>千瓦</template></el-input>
                   </el-form-item>
                   <el-form-item label="受限最大持续额定出力" prop="mcr_lim">
-                    <el-input v-model.number="form.mcr_lim"><template #suffix>千瓦</template></el-input>
+                    <el-input v-model.number="form.mcr_lim" type="number"><template #suffix>千瓦</template></el-input>
                   </el-form-item>
                   <el-form-item label="燃油类型" prop="main_oil_type">
                     <el-select v-model="form.main_oil_type">
@@ -85,7 +119,7 @@
                     </el-select>
                   </el-form-item>
                   <el-form-item label="燃油消耗率" prop="main_oil_rate">
-                    <el-input v-model.number="form.main_oil_rate"><template #suffix>克/千瓦时</template></el-input>
+                    <el-input v-model.number="form.main_oil_rate" type="number"><template #suffix>克/千瓦时</template></el-input>
                   </el-form-item>
                 </el-card>
               </el-col>
@@ -95,7 +129,7 @@
                     <span>副引擎</span>
                   </template>
                   <el-form-item label="最大持续额定出力" prop="amcr">
-                    <el-input v-model.number="form.amcr"><template #suffix>千瓦</template></el-input>
+                    <el-input v-model.number="form.amcr" type="number"><template #suffix>千瓦</template></el-input>
                   </el-form-item>
                   <el-form-item label="燃油类型" prop="aux_oil_type">
                     <el-select v-model="form.aux_oil_type">
@@ -106,7 +140,7 @@
                     </el-select>
                   </el-form-item>
                   <el-form-item label="燃油消耗率" prop="aux_oil_rate">
-                    <el-input v-model.number="form.aux_oil_rate"><template #suffix>克/千瓦时</template></el-input>
+                    <el-input v-model.number="form.aux_oil_rate" type="number"><template #suffix>克/千瓦时</template></el-input>
                   </el-form-item>
                 </el-card>
               </el-col>
@@ -146,7 +180,7 @@
               <el-input v-model="new_sailing.to"></el-input>
             </el-form-item>
             <el-form-item label="航程" prop="dist">
-              <el-input v-model.number="new_sailing.dist">
+              <el-input v-model.number="new_sailing.dist" type="number">
                 <template #suffix>千米</template>
               </el-input>
             </el-form-item>
@@ -260,7 +294,15 @@
 
 <script>
 import { reactive, ref, onMounted, onBeforeMount } from "vue";
-import { fetchData, fetchPrivateKey, fetchPublicKey, invokeContract, queryContract } from "../api";
+import {
+  fetchChainHeight, fetchChainMembers,
+  fetchChainStatus,
+  fetchData,
+  fetchPrivateKey,
+  fetchPublicKey,
+  invokeContract,
+  queryContract
+} from "../api";
 import { ElMessage } from "element-plus";
 import { KEYUTIL } from "jsrsasign";
 
@@ -400,16 +442,16 @@ export default {
               ElMessage.error("EEXI期望值设置失败！");
             }
           });
-
+          let eps = 1e-8;
           let MEA = form.main_engine_amount;
-          let MEP = Math.min(form.mcr * 0.75, form.mcr_lim * 0.83);
-          let MEC = CF.value[form.main_oil_type];
-          let MESFC = form.main_oil_rate;
-          let AEP = form.amcr * 0.5;
-          let AEC = CF.value[form.aux_oil_type];
-          let AESFC = form.aux_oil_rate;
-          let capacity = cap_fac.value[form.type][0] * form.carry_tonnage + cap_fac.value[form.type][1] * form.total_tonnage;
-          let velocity = form.speed;
+          let MEP = Math.min(form.mcr * 0.75, form.mcr_lim * 0.83) + eps;
+          let MEC = CF.value[form.main_oil_type] + eps;
+          let MESFC = form.main_oil_rate + eps;
+          let AEP = form.amcr + eps;
+          let AEC = CF.value[form.aux_oil_type] + eps;
+          let AESFC = form.aux_oil_rate + eps;
+          let capacity = Math.round(cap_fac.value[form.type][0] * form.carry_tonnage + cap_fac.value[form.type][1] * form.total_tonnage);
+          let velocity = form.speed + eps;
 
           query.method = "updateArchive";
           query.args = [account, MEA, MEP, MEC, MESFC, AEP, AEC, AESFC, capacity, velocity];
@@ -503,9 +545,22 @@ export default {
           query.args = [pk.value.pubKeyHex, new_sailing.dist];
           invokeContract(query).then((res) => {
             if(res.state === 200) {
-              ElMessage.success("碳足迹结算成功！");
+              query.method = 'getDecimals';
+              query.args = [];
               new_sailing.tx_id = res.data.txId;
-              sailing_record.value.push(new_sailing);
+              queryContract(query).then((res) => {
+                if(res.state === 200) {
+                  let decimals = res.data.result;
+                  query.method = 'getLastAttained';
+                  query.args = [pk.value.pubKeyHex];
+                  queryContract(query).then(res => {
+                    if(res.state === 200){
+                      ElMessage.success("碳足迹结算成功！");
+                      new_sailing.amount = res.data.result / 10 ** decimals;
+                      sailing_record.value.push(new_sailing);
+                    }
+                  })
+                }})
             }
             else {
               ElMessage.error("碳足迹结算失败！");
@@ -558,6 +613,42 @@ export default {
       getRequiredEEXI();
     }
 
+
+    const ledger = ref("jingangsai");
+    const health = ref(false);
+    const height = ref(0);
+    const memberlist = ref([]);
+
+    const status_query = reactive({
+      ledger: ledger.value,
+    });
+
+    // 获取区块链状态数据
+    const getStatus = () => {
+      fetchChainStatus(status_query).then((res) => {
+        if(res.state == 200) {
+          health.value = true;
+        }
+      });
+      fetchChainHeight(status_query).then((res) => {
+        if(res.state == 200) {
+          height.value = res.data;
+        }
+        else {
+          ElMessage.error("获取账本高度失败");
+        }
+      });
+      fetchChainMembers(status_query).then((res) => {
+        if(res.state == 200) {
+          memberlist.value = res.data.memberList;
+        }
+        else {
+          ElMessage.error("获取节点列表失败");
+        }
+      });
+    };
+    getStatus();
+
     return {
       activeNavMenu,
       formRef,
@@ -583,7 +674,12 @@ export default {
       required_eexi,
       current_eexi,
       balance,
-      update
+      update,
+
+      ledger,
+      health,
+      height,
+      memberlist
     };
   },
 };
@@ -607,11 +703,14 @@ export default {
   width: 260px;
 }
 :deep(.ifl) {
-  display: inline-flex;
+  margin: 0 10px;
 }
 
 .div_center {
   position: relative;
   margin: 20px auto 0 auto;
+}
+:deep(input[type="number"]::-webkit-inner-spin-button){
+  display: none!important;
 }
 </style>

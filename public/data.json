@@ -207,9 +207,18 @@
     "type": {
       "required": true
     },
-    "carry_tonnage": {
+    "carry": {
       "required": true
     },
+    "carry_tonnage": [{
+      "required": true,
+      "message": "请输入载重",
+      "trigger": "submit"
+    }, {
+      "type": "number",
+      "message": "请输入数字",
+      "trigger": "submit"
+    }],
     "speed": [
       {
         "required": true,
