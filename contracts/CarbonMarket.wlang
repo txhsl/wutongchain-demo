@@ -6,15 +6,15 @@ contract CarbonMarket {
 
     struct Archive {
         int MEA
-        int MEP
+        float MEP
         float MEC
         float MESFC
 
-        int AEP
+        float AEP
         float AEC
         float AESFC
 
-        float capacity
+        int capacity
         float velocity
 
         float coefficient
@@ -23,7 +23,7 @@ contract CarbonMarket {
     struct Required {
         int X
         float a
-        float b
+        int b
         float c
         float coefficient
     }
@@ -36,7 +36,7 @@ contract CarbonMarket {
         return decimals
     }
 
-    public string register(string account, int X, float a, float b, float c, float coefficient) {
+    public string register(string account, int X, float a, int b, float c, float coefficient) {
         Required req
         req.X = X
         req.a = a
@@ -49,7 +49,7 @@ contract CarbonMarket {
         return "success"
     }
 
-    public string updateArchive(string account, int MEA, int MEP, float MEC, float MESFC, int AEP, float AEC, float AESFC, float capacity, float velocity) {
+    public string updateArchive(string account, int MEA, float MEP, float MEC, float MESFC, float AEP, float AEC, float AESFC, int capacity, float velocity) {
         Archive arc
         arc.MEA = MEA
         arc.MEP = MEP

@@ -443,17 +443,29 @@ export default {
     };
 
     const getBalance = () => {
-      query.method = 'balanceOf';
-      query.args = [pk.value.pubKeyHex];
+      query.method = 'getDecimals';
+      query.args = [];
       queryContract(query).then((res) => {
         if(res.state === 200){
-          ElMessage.success("更新碳积分成功！");
-          balance.value = res.data.result;
+          let decimals = res.data.result;
+          query.method = 'balanceOf';
+          query.args = [pk.value.pubKeyHex];
+          queryContract(query).then((res) => {
+            if(res.state === 200){
+              ElMessage.success("碳积分余额获取成功！");
+              balance.value = res.data.result / 10 ** decimals;
+            }
+            else {
+              ElMessage.error("碳积分余额获取失败！");
+            }
+          });
         }
         else {
-          ElMessage.error("更新碳积分失败！");
+          ElMessage.error("碳积分余额获取失败！");
         }
       });
+
+
     };
 
     const getRequiredEEXI = () => {
@@ -488,7 +500,7 @@ export default {
       sailing_ref.value.validate(valid => {
         if(valid) {
           query.method = 'settleAccount';
-          query.args = [new_sailing.dist];
+          query.args = [pk.value.pubKeyHex, new_sailing.dist];
           invokeContract(query).then((res) => {
             if(res.state === 200) {
               ElMessage.success("碳足迹结算成功！");
@@ -509,18 +521,28 @@ export default {
     const submit_tx = () => {
       tx_ref.value.validate(valid => {
         if(valid) {
-          query.method = 'transfer';
-          query.args = [pk.value.pubKeyHex, new_tx.to, new_tx.amount];
-          invokeContract(query).then((res) => {
-            if(res.state === 200) {
-              ElMessage.success("交易成功！");
-              new_tx.time = new Date();
-              new_tx.from = pk.value.pubKeyHex;
-              new_tx.tx_id = res.data.txId;
-              transaction_record.value.push(new_tx);
+          query.method = 'getDecimals';
+          query.args = [];
+          queryContract(query).then((res) => {
+            if(res.state === 200){
+              let decimals = res.data.result;
+              query.method = 'transfer';
+              query.args = [pk.value.pubKeyHex, new_tx.to, new_tx.amount * 10 ** decimals];
+              invokeContract(query).then((res) => {
+                if(res.state === 200) {
+                  ElMessage.success("积分交易成功！");
+                  new_tx.time = new Date();
+                  new_tx.from = pk.value.pubKeyHex;
+                  new_tx.tx_id = res.data.txId;
+                  transaction_record.value.push(new_tx);
+                }
+                else {
+                  ElMessage.error("积分交易失败！");
+                }
+              });
             }
             else {
-              ElMessage.error("交易失败！");
+              ElMessage.error("积分交易失败！");
             }
           });
         }
