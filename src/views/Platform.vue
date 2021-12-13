@@ -336,6 +336,7 @@ export default {
         oil_type.value = res.oil_type;
         ship_type.value = res.ship_type;
         all_tonnage.value = res.all_tonnage;
+        tonnage.value = all_tonnage.value[form.type];
         CF.value = res.CF;
         AC.value = res.AC;
         X.value = res.X;
@@ -365,7 +366,7 @@ export default {
 
     const onShipTypeChange = (val) => {
       tonnage.value = all_tonnage.value[val];
-      form.carry_tonnage = 0;
+      form.carry = 0;
     };
     const isNavSelected = (index) => activeNavMenu.value === index;
     const onSelectNavMenu = (key) => {
