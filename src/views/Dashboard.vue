@@ -12,46 +12,45 @@
                     </div>
                     <div class="user-info-list">
                         上次登录时间：
-                        <span>2019-11-01</span>
+                        <span>2021-12-01</span>
                     </div>
                     <div class="user-info-list">
                         上次登录地点：
-                        <span>东莞</span>
+                        <span>上海</span>
                     </div>
                 </el-card>
-                <el-card shadow="hover" style="height:252px;">
+                <el-card shadow="hover" style="height:282px;">
                     <template #header>
                         <div class="clearfix">
                             <span>语言详情</span>
                         </div>
                     </template>
-                    Vue
-                    <el-progress :percentage="71.3" color="#42b983"></el-progress>JavaScript
-                    <el-progress :percentage="24.1" color="#f1e05a"></el-progress>CSS
-                    <el-progress :percentage="13.7"></el-progress>HTML
-                    <el-progress :percentage="5.9" color="#f56c6c"></el-progress>
+                    <div class="mt10">JavaScript<el-progress :percentage="77.2" color="#f1e05a"></el-progress></div>
+                    <div class="mt10">Vue<el-progress :percentage="20.5" color="#42b983"></el-progress></div>
+                    <div class="mt10">HTML<el-progress :percentage="1.7" color="#f56c6c"></el-progress></div>
+                    <div class="mt10">CSS<el-progress :percentage="0.6"></el-progress></div>
                 </el-card>
             </el-col>
             <el-col :span="16">
                 <el-row :gutter="20" class="mgb20">
                     <el-col :span="8">
                         <el-card shadow="hover" :body-style="{ padding: '0px' }">
-                            <div class="grid-content grid-con-1">
-                                <i class="el-icon-user-solid grid-con-icon"></i>
+                            <div class="grid-content grid-con-2">
+                                <i class="el-icon-message-solid grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">1234</div>
-                                    <div>用户访问量</div>
+                                    <div class="grid-num">{{health ? '已连接' : '未连接'}}</div>
+                                    <div>连接状况</div>
                                 </div>
                             </div>
                         </el-card>
                     </el-col>
                     <el-col :span="8">
                         <el-card shadow="hover" :body-style="{ padding: '0px' }">
-                            <div class="grid-content grid-con-2">
-                                <i class="el-icon-message-solid grid-con-icon"></i>
+                            <div class="grid-content grid-con-1">
+                                <i class="el-icon-user-solid grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">321</div>
-                                    <div>系统消息</div>
+                                    <div class="grid-num">{{memberlist.length}}</div>
+                                    <div>节点数量</div>
                                 </div>
                             </div>
                         </el-card>
@@ -61,53 +60,34 @@
                             <div class="grid-content grid-con-3">
                                 <i class="el-icon-s-goods grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">5000</div>
-                                    <div>数量</div>
+                                    <div class="grid-num">{{height}}</div>
+                                    <div>账本高度</div>
                                 </div>
                             </div>
                         </el-card>
                     </el-col>
                 </el-row>
-                <el-card shadow="hover" style="height:403px;">
+                <el-card shadow="hover" style="height:433px;">
                     <template #header>
                         <div class="clearfix">
-                            <span>待办事项</span>
+                            <span>节点列表（账本ID：{{ledger}}）</span>
                             <el-button style="float: right; padding: 3px 0" type="text">添加</el-button>
                         </div>
                     </template>
 
-                    <el-table :show-header="false" :data="todoList" style="width:100%;">
-                        <el-table-column width="40">
-                            <template #default="scope">
-                                <el-checkbox v-model="scope.row.status"></el-checkbox>
-                            </template>
+                    <el-table :data="memberlist" border class="table" ref="multipleTable" header-cell-class-name="table-header">
+                        <el-table-column prop="id" label="ID"></el-table-column>
+                        <el-table-column prop="shownName" width="85" label="节点名称"></el-table-column>
+                        <el-table-column width="50" label="状态">
+                            <template #default="scope">{{scope.row.state ? '离线': '在线'}}</template>
                         </el-table-column>
-                        <el-table-column>
-                            <template #default="scope">
-                                <div class="todo-item" :class="{
-                                        'todo-item-del': scope.row.status,
-                                    }">{{ scope.row.title }}</div>
-                            </template>
-                        </el-table-column>
-                        <el-table-column width="60">
-                            <template>
-                                <i class="el-icon-edit"></i>
-                                <i class="el-icon-delete"></i>
-                            </template>
+                        <el-table-column prop="port" width="90" label="RPC端口"></el-table-column>
+                        <el-table-column prop="inAddr" label="内网地址"></el-table-column>
+                        <el-table-column prop="height" width="80" label="同步高度"></el-table-column>
+                        <el-table-column width="80" label="TLS状态">
+                            <template #default="scope">{{scope.row.tlsEnabled ? '关闭': '开启'}}</template>
                         </el-table-column>
                     </el-table>
-                </el-card>
-            </el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-col :span="12">
-                <el-card shadow="hover">
-                    <schart ref="bar" class="schart" canvasId="bar" :options="options"></schart>
-                </el-card>
-            </el-col>
-            <el-col :span="12">
-                <el-card shadow="hover">
-                    <schart ref="line" class="schart" canvasId="line" :options="options2"></schart>
                 </el-card>
             </el-col>
         </el-row>
@@ -115,122 +95,58 @@
 </template>
 
 <script>
-import Schart from "vue-schart";
-import { reactive } from "vue";
+import { ref, reactive } from "vue";
+import { ElMessage } from "element-plus";
+import { fetchChainStatus, fetchChainHeight, fetchChainMembers } from "../api/index";
+
 export default {
     name: "dashboard",
-    components: { Schart },
     setup() {
         const name = localStorage.getItem("ms_username");
         const role = name === "admin" ? "超级管理员" : "普通用户";
 
-        const data = reactive([
-            {
-                name: "2018/09/04",
-                value: 1083,
-            },
-            {
-                name: "2018/09/05",
-                value: 941,
-            },
-            {
-                name: "2018/09/06",
-                value: 1139,
-            },
-            {
-                name: "2018/09/07",
-                value: 816,
-            },
-            {
-                name: "2018/09/08",
-                value: 327,
-            },
-            {
-                name: "2018/09/09",
-                value: 228,
-            },
-            {
-                name: "2018/09/10",
-                value: 1065,
-            },
-        ]);
-        const options = {
-            type: "bar",
-            title: {
-                text: "最近一周各品类销售图",
-            },
-            xRorate: 25,
-            labels: ["周一", "周二", "周三", "周四", "周五"],
-            datasets: [
-                {
-                    label: "家电",
-                    data: [234, 278, 270, 190, 230],
-                },
-                {
-                    label: "百货",
-                    data: [164, 178, 190, 135, 160],
-                },
-                {
-                    label: "食品",
-                    data: [144, 198, 150, 235, 120],
-                },
-            ],
+        const ledger = ref("jingangsai");
+        const health = ref(false);
+        const height = ref(0);
+        const memberlist = ref([]);
+
+        const query = reactive({
+            ledger: ledger.value,
+        });
+
+        // 获取区块链状态数据
+        const getStatus = () => {
+            fetchChainStatus(query).then((res) => {
+                if(res.state == 200) {
+                    health.value = true;
+                }
+            });
+            fetchChainHeight(query).then((res) => {
+                if(res.state == 200) {
+                    height.value = res.data;
+                }
+                else {
+                    ElMessage.error("获取账本高度失败");
+                }
+            });
+            fetchChainMembers(query).then((res) => {
+                if(res.state == 200) {
+                    memberlist.value = res.data.memberList;
+                }
+                else {
+                    ElMessage.error("获取节点列表失败");
+                }
+            });
         };
-        const options2 = {
-            type: "line",
-            title: {
-                text: "最近几个月各品类销售趋势图",
-            },
-            labels: ["6月", "7月", "8月", "9月", "10月"],
-            datasets: [
-                {
-                    label: "家电",
-                    data: [234, 278, 270, 190, 230],
-                },
-                {
-                    label: "百货",
-                    data: [164, 178, 150, 135, 160],
-                },
-                {
-                    label: "食品",
-                    data: [74, 118, 200, 235, 90],
-                },
-            ],
-        };
-        const todoList = reactive([
-            {
-                title: "今天要修复100个bug",
-                status: false,
-            },
-            {
-                title: "今天要修复100个bug",
-                status: false,
-            },
-            {
-                title: "今天要写100行代码加几个bug吧",
-                status: false,
-            },
-            {
-                title: "今天要修复100个bug",
-                status: false,
-            },
-            {
-                title: "今天要修复100个bug",
-                status: true,
-            },
-            {
-                title: "今天要写100行代码加几个bug吧",
-                status: true,
-            },
-        ]);
+        getStatus();
 
         return {
             name,
-            data,
-            options,
-            options2,
-            todoList,
             role,
+            ledger,
+            health,
+            height,
+            memberlist,
         };
     },
 };
@@ -326,6 +242,10 @@ export default {
 
 .user-info-list span {
     margin-left: 70px;
+}
+
+.mt10 {
+    margin-top: 10px;
 }
 
 .mgb20 {
