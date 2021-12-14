@@ -46,7 +46,7 @@ export default {
             {
                 icon: "el-icon-lx-apps",
                 index: '/platform',
-                title: "碳排放系统"
+                title: "碳排放平台"
             },
             {
                 icon: "el-icon-lx-search",

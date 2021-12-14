@@ -37,7 +37,7 @@ export default {
     setup() {
         const router = useRouter();
         const param = reactive({
-            username: "admin",
+            username: "046243f660318986ccc51230279180594afc032fcb71326235638829a28a0260652b457c0d82e9ae4de51f9542c667f6b8bdb860a4b15201fe931dae2bc52357ef",
             password: "123123",
         });
 
@@ -58,7 +58,7 @@ export default {
             login.value.validate((valid) => {
                 if (valid) {
                     ElMessage.success("登录成功");
-                    localStorage.setItem("ms_username", param.username);
+                    localStorage.setItem("ms_username", "admin");
                     router.push("/");
                 } else {
                     ElMessage.error("登录成功");

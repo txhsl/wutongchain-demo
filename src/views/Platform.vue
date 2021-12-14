@@ -26,98 +26,32 @@
           <div class="intro-page mt20">
             <el-row></el-row>
             <el-row class="mt50"></el-row>
-            <el-row class="intro-title">使用说明</el-row>
-            <el-row :gutter="20" class="intro-box mt50">
+            <el-row class="intro-title">碳排放平台使用说明</el-row>
+            <el-row :gutter="20" class="intro-box mt20">
               <el-col :span="1"/>
               <el-col :span="10">
-                <el-carousel :interval="4000" height="500px">
-                  <el-carousel-item>
-                    <el-card>
-                      <template #header>
-                        <div class="tac">
-                          <strong class="home-intro-title">系统介绍</strong>
-                        </div>
-                      </template>
-                      <div class="home-intro-text">
-                        近年来，“碳达峰、碳中和”已成为国家战略。国际海事组织制定了在2030年之前将航运碳排放强度降低40%，
-                        并在2050年之前将碳排放强度降低70%的明确目标。2023年即将针对船舶实施船舶能效指数（EEXI）及碳排放
-                        强度指数（CII）考核。这项措施将对现有远洋航行船舶产生重大影响。其中EEXI是针对船舶设计、建造的考核指标。
-                        我们在对国际海事组织的EEXI相关政策法规充分研究的基础上，结合区块链技术，设计了航运领域碳排放核算，监控与
-                        交易平台，并搭建了以区块链技术为核心的碳排放计算与交易系统DEMO。
-                      </div>
-                    </el-card>
-                  </el-carousel-item>
-                  <el-carousel-item>
-                    <el-card>
-                      <template #header>
-                        <div class="tac">
-                          <strong class="home-intro-title">指标认定</strong>
-                        </div>
-                      </template>
-                      <div>
-                        <img src="/public/img/formula.png"/>
-                      </div>
-                    </el-card>
-                  </el-carousel-item>
-                  <el-carousel-item>
-                    <el-card>
-                      <template #header>
-                        <div class="tac">
-                          <strong class="home-intro-title">EEXI标准与减排</strong>
-                        </div>
-                      </template>
-                      <div class="home-intro-text">
-                        <p>EEDI（船舶能效设计指数）基准线值是指对特定船舶类型和吨位下所允许的最大EEDI值。按如下式计算：</p>
-                        <p>EEDI = (1 - X/100) * a * b<sup>-c</sup></p>
-                        <p>X----折减系数</p>
-                        <p>a、c----统计分析获得的船型系数</p>
-                        <p>b----船舶的载重吨</p>
-                      </div>
-                    </el-card>
-                  </el-carousel-item>
-                  <el-carousel-item>
-                    <el-card>
-                      <template #header>
-                        <div class="tac">
-                          <strong class="home-intro-title">碳足迹结算</strong>
-                        </div>
-                      </template>
-                      <div class="home-intro-text">
-                        <p>船主向系统提交船舶的详细信息，包括船型、载重量、主副引擎参数等，系统根据这些信息计算出当前船舶EEXI值和标准EEDI值。</p>
-                        <p>如果船舶EEXI值小于其对应的EEDI值，则每次航行结束后，船主可以向系统提交航程信息，以获取碳积分。</p>
-                        <p>如果船舶EEXI值超过其对应的EEDI值，则船舶出航会扣掉碳积分。</p>
-                        <p>在相同的行程下，船舶EEXI值和EEDI值相差越大，获取的碳积分越多。</p>
-                      </div>
-                    </el-card>
-                  </el-carousel-item>
-                  <el-carousel-item>
-                    <el-card>
-                      <template #header>
-                        <div class="tac">
-                          <strong class="home-intro-title">碳积分交易</strong>
-                        </div>
-                      </template>
-                      <div class="home-intro-text">
-                        <p>如果船舶的EEXI值超过其标准EEDI值，则每次航行都会丢失碳积分，当碳积分扣完则船舶不允许航行。</p>
-                        <p>此时如果船主需要继续航行则需要向其他有充足碳积分的船主购买碳积分。</p>
-                        <p>这样可以迫使碳排放不达标的船舶进行减排措施，达到总体减排的目标。</p>
-                      </div>
-                    </el-card>
-                  </el-carousel-item>
-                </el-carousel>
-
-<!--                <div class="intro-desc">1. 系统介绍</div>-->
-<!--                <div class="intro-desc mt20">2. 指标认定</div>-->
-<!--                <div class="intro-desc mt20">3. EEXI标准与减排</div>-->
-<!--                <div class="intro-desc mt20">4. 碳足迹结算</div>-->
-<!--                <div class="intro-desc mt20">5. 碳积分与交易</div>-->
+                <div class="intro-desc">1. 指标介绍</div>
+                <div class="intro-desc mt20 td2">EEDI基准值 -- 船舶能效设计指数减排要求值，根据如下公式计算：</div>
+                <div class="intro-desc mt20 td2"><b>EEDI基准值 = (1 - X/100) * a * b<sup>-c</sup></b>，X为折减系数，a、c为船型系数，b为船舶载重吨</div>
+                <div class="intro-desc mt20 td2">EEXI -- 船舶实施船舶能效指数，根据如下公式计算：</div>
+                <img class="intro-desc mt20" style="width:600px;padding-left:2em;" src="/public/img/formula.png"/>
+                <div class="intro-desc mt20">2. EEXI标准与减排</div>
+                <div class="intro-desc mt20 td2">符合EEDI基准值要求的登记船只随出航收到碳积分奖励</div>
+                <div class="intro-desc mt20 td2">不符合EEDI基准值要求的登记船只随出航受到碳积分惩罚</div>
               </el-col>
               <el-col :span="2"/>
-              <el-col :span="10" class="fig-box">
+              <el-col :span="10">
+                <div class="intro-desc mt20">3. 碳积分结算</div>
+                <div class="intro-desc mt20 td2">登记船只按照 <b>(EEDI基准值 - EEXI) * 航行里程 * 载重吨</b> 计算减排贡献</div>
+                <div class="intro-desc mt20 td2">每次结算时，减排贡献按照1:10<sup>-4</sup>的比例折算为积分奖励</div>
+                <div class="intro-desc mt20">4. 碳积分交易与冻结规则</div>
+                <div class="intro-desc mt20 td2">碳积分余额为负时禁止继续结算和扣除，需要向其他有余额的船只请求交易</div>
+                <div class="intro-desc mt20">5. （附）各类型燃料转换率参考值</div>
+                <div class="fig-box mt20"/>
               <el-col :span="1"/>
               </el-col>
             </el-row>
-            <el-row class="mt75"></el-row>
+            <el-row class="mt50"></el-row>
           </div>
       </div>
       <div v-if="isNavSelected('2')">
@@ -468,6 +402,7 @@ export default {
           keypair.pk = res;
           sk.value = KEYUTIL.getKey(keypair.sk);
           pk.value = KEYUTIL.getKey(keypair.pk.replaceAll(" EC ", " "));
+          console.log(pk.value);
         });
       });
     };
@@ -729,8 +664,9 @@ export default {
 }
 
 .fig-box {
-  height: 490px;
-  background-image: url(../assets/img/login-bg.jpg);
+  height: 295px;
+  width: 580px;
+  background-image: url(../assets/img/c.png);
 }
 
 .mt20 {
@@ -745,6 +681,10 @@ export default {
   margin-top: 75px;
 }
 
+.td2 {
+  text-indent: 2em;
+}
+
 .intro-page {
   width: 100%;
   background: #f3f3f3;
@@ -754,13 +694,13 @@ export default {
 .intro-title {
   justify-content: center;
   line-height: 1;
-  font-size: 50px;
+  font-size: 36px;
   font-weight: bolder;
   color: #2d8cf0;
 }
 
 .intro-desc {
-  font-size: 18px;
+  font-size: 16px;
   color: #777;
 }
 
