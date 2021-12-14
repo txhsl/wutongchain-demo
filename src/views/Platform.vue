@@ -23,29 +23,26 @@
         <el-menu-item index="5">我的</el-menu-item>
       </el-menu>
       <div v-if="isNavSelected('1')">
-        <div class="container">
-          <div class="handle-box">
-            账本ID：{{ledger}}，
-            连接状况：{{health ? '已连接' : '未连接'}}，
-            账本高度：{{height}}。
+          <div class="intro-page mt20">
+            <el-row></el-row>
+            <el-row class="mt50"></el-row>
+            <el-row class="intro-title">使用说明</el-row>
+            <el-row :gutter="20" class="intro-box mt50">
+              <el-col :span="1"/>
+              <el-col :span="10" class="message-box">
+                <div class="intro-desc">1. 系统介绍</div>
+                <div class="intro-desc mt20">2. 指标认定</div>
+                <div class="intro-desc mt20">3. EEXI标准与减排</div>
+                <div class="intro-desc mt20">4. 碳足迹结算</div>
+                <div class="intro-desc mt20">5. 碳积分与交易</div>
+              </el-col>
+              <el-col :span="2"/>
+              <el-col :span="10" class="fig-box">
+              <el-col :span="1"/>
+              </el-col>
+            </el-row>
+            <el-row class="mt75"></el-row>
           </div>
-          <el-table :data="memberlist" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-            <el-table-column prop="id" label="ID"></el-table-column>
-            <el-table-column prop="shownName" width="85" label="节点名称"></el-table-column>
-            <el-table-column prop="addr" label="IP"></el-table-column>
-            <el-table-column width="50" label="状态">
-              <template #default="scope">{{scope.row.state ? '离线': '在线'}}</template>
-            </el-table-column>
-            <el-table-column prop="port" width="90" label="RPC端口"></el-table-column>
-            <el-table-column prop="inAddr" label="内网地址"></el-table-column>
-            <el-table-column prop="height" width="80" label="同步高度"></el-table-column>
-            <el-table-column width="80" label="TLS状态">
-              <template #default="scope">{{scope.row.tlsEnabled ? '关闭': '开启'}}</template>
-            </el-table-column>
-            <el-table-column prop="hashType" width="80" label="哈希方式"></el-table-column>
-            <el-table-column prop="consensus" width="80" label="共识算法"></el-table-column>
-          </el-table>
-        </div>
       </div>
       <div v-if="isNavSelected('2')">
         <div class="form-box">
@@ -295,8 +292,6 @@
 <script>
 import { reactive, ref, onMounted, onBeforeMount } from "vue";
 import {
-  fetchChainHeight, fetchChainMembers,
-  fetchChainStatus,
   fetchData,
   fetchPrivateKey,
   fetchPublicKey,
@@ -613,42 +608,6 @@ export default {
       getRequiredEEXI();
     }
 
-
-    const ledger = ref("jingangsai");
-    const health = ref(false);
-    const height = ref(0);
-    const memberlist = ref([]);
-
-    const status_query = reactive({
-      ledger: ledger.value,
-    });
-
-    // 获取区块链状态数据
-    const getStatus = () => {
-      fetchChainStatus(status_query).then((res) => {
-        if(res.state == 200) {
-          health.value = true;
-        }
-      });
-      fetchChainHeight(status_query).then((res) => {
-        if(res.state == 200) {
-          height.value = res.data;
-        }
-        else {
-          ElMessage.error("获取账本高度失败");
-        }
-      });
-      fetchChainMembers(status_query).then((res) => {
-        if(res.state == 200) {
-          memberlist.value = res.data.memberList;
-        }
-        else {
-          ElMessage.error("获取节点列表失败");
-        }
-      });
-    };
-    getStatus();
-
     return {
       activeNavMenu,
       formRef,
@@ -674,12 +633,7 @@ export default {
       required_eexi,
       current_eexi,
       balance,
-      update,
-
-      ledger,
-      health,
-      height,
-      memberlist
+      update
     };
   },
 };
@@ -691,8 +645,47 @@ export default {
   width: 100%;
 }
 
+.message-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.fig-box {
+  height: 490px;
+  background-image: url(../assets/img/login-bg.jpg);
+}
+
 .mt20 {
   margin-top: 20px;
+}
+
+.mt50 {
+  margin-top: 50px;
+}
+
+.mt75 {
+  margin-top: 75px;
+}
+
+.intro-page {
+  width: 100%;
+  background: #f3f3f3;
+  box-sizing: border-box;
+}
+
+.intro-title {
+  justify-content: center;
+  line-height: 1;
+  font-size: 50px;
+  font-weight: bolder;
+  color: #2d8cf0;
+}
+
+.intro-desc {
+  font-size: 18px;
+  color: #777;
 }
 
 :deep(#ship-type) {

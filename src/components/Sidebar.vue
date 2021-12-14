@@ -38,11 +38,11 @@ import { useRoute } from "vue-router";
 export default {
     setup() {
         const items = [
-            // {
-            //     icon: "el-icon-lx-home",
-            //     index: "/dashboard",
-            //     title: "系统首页",
-            // },
+            {
+                icon: "el-icon-lx-home",
+                index: "/dashboard",
+                title: "系统首页",
+            },
             {
                 icon: "el-icon-lx-apps",
                 index: '/platform',
@@ -53,11 +53,11 @@ export default {
                 index: "1",
                 title: "工具页面",
                 subs: [
-                    // {
-                    //     icon: "el-icon-lx-global",
-                    //     index: "/chainstatus",
-                    //     title: "区块链状态",
-                    // },
+                    {
+                        icon: "el-icon-lx-global",
+                        index: "/chainstatus",
+                        title: "区块链状态",
+                    },
                     {
                         icon: "el-icon-lx-apps",
                         index: "/smartcontract",
