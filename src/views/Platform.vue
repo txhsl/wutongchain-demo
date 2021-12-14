@@ -29,12 +29,88 @@
             <el-row class="intro-title">使用说明</el-row>
             <el-row :gutter="20" class="intro-box mt50">
               <el-col :span="1"/>
-              <el-col :span="10" class="message-box">
-                <div class="intro-desc">1. 系统介绍</div>
-                <div class="intro-desc mt20">2. 指标认定</div>
-                <div class="intro-desc mt20">3. EEXI标准与减排</div>
-                <div class="intro-desc mt20">4. 碳足迹结算</div>
-                <div class="intro-desc mt20">5. 碳积分与交易</div>
+              <el-col :span="10">
+                <el-carousel :interval="4000" height="500px">
+                  <el-carousel-item>
+                    <el-card>
+                      <template #header>
+                        <div class="tac">
+                          <strong class="home-intro-title">系统介绍</strong>
+                        </div>
+                      </template>
+                      <div class="home-intro-text">
+                        近年来，“碳达峰、碳中和”已成为国家战略。国际海事组织制定了在2030年之前将航运碳排放强度降低40%，
+                        并在2050年之前将碳排放强度降低70%的明确目标。2023年即将针对船舶实施船舶能效指数（EEXI）及碳排放
+                        强度指数（CII）考核。这项措施将对现有远洋航行船舶产生重大影响。其中EEXI是针对船舶设计、建造的考核指标。
+                        我们在对国际海事组织的EEXI相关政策法规充分研究的基础上，结合区块链技术，设计了航运领域碳排放核算，监控与
+                        交易平台，并搭建了以区块链技术为核心的碳排放计算与交易系统DEMO。
+                      </div>
+                    </el-card>
+                  </el-carousel-item>
+                  <el-carousel-item>
+                    <el-card>
+                      <template #header>
+                        <div class="tac">
+                          <strong class="home-intro-title">指标认定</strong>
+                        </div>
+                      </template>
+                      <div>
+                        <img src="/public/img/formula.png"/>
+                      </div>
+                    </el-card>
+                  </el-carousel-item>
+                  <el-carousel-item>
+                    <el-card>
+                      <template #header>
+                        <div class="tac">
+                          <strong class="home-intro-title">EEXI标准与减排</strong>
+                        </div>
+                      </template>
+                      <div class="home-intro-text">
+                        <p>EEDI（船舶能效设计指数）基准线值是指对特定船舶类型和吨位下所允许的最大EEDI值。按如下式计算：</p>
+                        <p>EEDI = (1 - X/100) * a * b<sup>-c</sup></p>
+                        <p>X----折减系数</p>
+                        <p>a、c----统计分析获得的船型系数</p>
+                        <p>b----船舶的载重吨</p>
+                      </div>
+                    </el-card>
+                  </el-carousel-item>
+                  <el-carousel-item>
+                    <el-card>
+                      <template #header>
+                        <div class="tac">
+                          <strong class="home-intro-title">碳足迹结算</strong>
+                        </div>
+                      </template>
+                      <div class="home-intro-text">
+                        <p>船主向系统提交船舶的详细信息，包括船型、载重量、主副引擎参数等，系统根据这些信息计算出当前船舶EEXI值和标准EEDI值。</p>
+                        <p>如果船舶EEXI值小于其对应的EEDI值，则每次航行结束后，船主可以向系统提交航程信息，以获取碳积分。</p>
+                        <p>如果船舶EEXI值超过其对应的EEDI值，则船舶出航会扣掉碳积分。</p>
+                        <p>在相同的行程下，船舶EEXI值和EEDI值相差越大，获取的碳积分越多。</p>
+                      </div>
+                    </el-card>
+                  </el-carousel-item>
+                  <el-carousel-item>
+                    <el-card>
+                      <template #header>
+                        <div class="tac">
+                          <strong class="home-intro-title">碳积分交易</strong>
+                        </div>
+                      </template>
+                      <div class="home-intro-text">
+                        <p>如果船舶的EEXI值超过其标准EEDI值，则每次航行都会丢失碳积分，当碳积分扣完则船舶不允许航行。</p>
+                        <p>此时如果船主需要继续航行则需要向其他有充足碳积分的船主购买碳积分。</p>
+                        <p>这样可以迫使碳排放不达标的船舶进行减排措施，达到总体减排的目标。</p>
+                      </div>
+                    </el-card>
+                  </el-carousel-item>
+                </el-carousel>
+
+<!--                <div class="intro-desc">1. 系统介绍</div>-->
+<!--                <div class="intro-desc mt20">2. 指标认定</div>-->
+<!--                <div class="intro-desc mt20">3. EEXI标准与减排</div>-->
+<!--                <div class="intro-desc mt20">4. 碳足迹结算</div>-->
+<!--                <div class="intro-desc mt20">5. 碳积分与交易</div>-->
               </el-col>
               <el-col :span="2"/>
               <el-col :span="10" class="fig-box">
@@ -49,7 +125,7 @@
           <el-form ref="formRef" :rules="rules" :model="form">
             <el-card class="mt20">
               <template #header>
-                <span>基本信息</span>
+                <strong>基本信息</strong>
               </template>
               <el-row :gutter="20">
                 <el-col :span="4">
@@ -96,7 +172,7 @@
               <el-col :span="12">
                 <el-card class="mt20">
                   <template #header>
-                    <span>主引擎</span>
+                    <strong>主引擎</strong>
                   </template>
                   <el-form-item label="主引擎数量" prop="main_engine_amount">
                     <el-input-number :min="1" :step="1" v-model="form.main_engine_amount"></el-input-number>
@@ -123,7 +199,7 @@
               <el-col :span="12">
                 <el-card class="mt20">
                   <template #header>
-                    <span>副引擎</span>
+                    <strong>副引擎</strong>
                   </template>
                   <el-form-item label="最大持续额定出力" prop="amcr">
                     <el-input v-model.number="form.amcr" type="number"><template #suffix>千瓦</template></el-input>
@@ -277,7 +353,7 @@
             <el-descriptions-item label="当前积分">{{balance}}</el-descriptions-item>
             <el-descriptions-item label="标准EEXI">{{required_eexi}}</el-descriptions-item>
             <el-descriptions-item label="当前EEXI">{{current_eexi}}</el-descriptions-item>
-            <el-descriptions-item label="是否允许出航">{{current_eexi <= required_eexi ? '是' : '否'}}</el-descriptions-item>
+            <el-descriptions-item label="是否允许出航">{{balance > 0 ? '是' : '否'}}</el-descriptions-item>
           </el-descriptions>
           <el-row>
             <el-button type="primary" class="div_center" @click="update">更新信息</el-button>
@@ -705,5 +781,22 @@ export default {
 }
 :deep(input[type="number"]::-webkit-inner-spin-button){
   display: none!important;
+}
+
+:deep(.tac){
+  text-align: center;
+}
+
+.fh {
+  height: 100%;
+}
+
+.home-intro-title {
+  font-size: 150%;
+}
+
+.home-intro-text {
+  font-size: 120%;
+  line-height: 1.5;
 }
 </style>
