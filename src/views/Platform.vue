@@ -34,7 +34,7 @@
                 <div class="intro-desc mt20 td2">EEDI基准值 -- 船舶能效设计指数减排要求值，根据如下公式计算：</div>
                 <div class="intro-desc mt20 td2"><b>EEDI基准值 = (1 - X/100) * a * b<sup>-c</sup></b>，X为折减系数，a、c为船型系数，b为船舶载重吨</div>
                 <div class="intro-desc mt20 td2">EEXI -- 船舶实施船舶能效指数，根据如下公式计算：</div>
-                <img class="intro-desc mt20" style="width:600px;padding-left:2em;" src="/public/img/formula.png"/>
+                <img class="intro-desc mt20" style="width:500px;padding-left:2em;" src="/public/img/formula.png"/>
                 <div class="intro-desc mt20">2. EEXI标准与减排</div>
                 <div class="intro-desc mt20 td2">符合EEDI基准值要求的登记船只随出航收到碳积分奖励</div>
                 <div class="intro-desc mt20 td2">不符合EEDI基准值要求的登记船只随出航受到碳积分惩罚</div>
@@ -47,7 +47,7 @@
                 <div class="intro-desc mt20">4. 碳积分交易与冻结规则</div>
                 <div class="intro-desc mt20 td2">碳积分余额为负时禁止继续结算和扣除，需要向其他有余额的船只请求交易</div>
                 <div class="intro-desc mt20">5. （附）各类型燃料转换率参考值</div>
-                <div class="fig-box mt20"/>
+                <img class="intro-desc mt20" style="width:500px;" src="/public/img/c.png"/>
               <el-col :span="1"/>
               </el-col>
             </el-row>
@@ -402,7 +402,6 @@ export default {
           keypair.pk = res;
           sk.value = KEYUTIL.getKey(keypair.sk);
           pk.value = KEYUTIL.getKey(keypair.pk.replaceAll(" EC ", " "));
-          console.log(pk.value);
         });
       });
     };
@@ -661,12 +660,6 @@ export default {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-}
-
-.fig-box {
-  height: 295px;
-  width: 580px;
-  background-image: url(../assets/img/c.png);
 }
 
 .mt20 {
